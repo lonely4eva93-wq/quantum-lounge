@@ -1,22 +1,27 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Quantum Lounge Social API
 servers:
   - url: /api
-    description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: lounge
+  - name: guests
+  - name: transactions
+  - name: settings
+  - name: messages
+  - name: energy
+  - name: teleport
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +29,470 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: ownerLogin
+      tags: [auth]
+      summary: Owner login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+        "401":
+          description: Unauthorized
+
+  /auth/logout:
+    post:
+      operationId: ownerLogout
+      tags: [auth]
+      summary: Owner logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+
+  /auth/me:
+    get:
+      operationId: getAuthMe
+      tags: [auth]
+      summary: Get current auth status
+      responses:
+        "200":
+          description: Auth status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStatus"
+
+  /lounge/rooms:
+    get:
+      operationId: listRooms
+      tags: [lounge]
+      summary: List all lounge rooms
+      responses:
+        "200":
+          description: List of rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Room"
+    post:
+      operationId: createRoom
+      tags: [lounge]
+      summary: Create a new lounge room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoomBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Room"
+
+  /lounge/rooms/{id}:
+    get:
+      operationId: getRoom
+      tags: [lounge]
+      summary: Get a single room
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Room details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Room"
+    put:
+      operationId: updateRoom
+      tags: [lounge]
+      summary: Update a room
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoomBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Room"
+    delete:
+      operationId: deleteRoom
+      tags: [lounge]
+      summary: Delete a room
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /guests:
+    get:
+      operationId: listGuests
+      tags: [guests]
+      summary: List all guests
+      responses:
+        "200":
+          description: List of guests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Guest"
+    post:
+      operationId: createGuest
+      tags: [guests]
+      summary: Check in a guest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGuestBody"
+      responses:
+        "201":
+          description: Guest checked in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Guest"
+
+  /guests/{id}:
+    get:
+      operationId: getGuest
+      tags: [guests]
+      summary: Get guest details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Guest
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Guest"
+    put:
+      operationId: updateGuest
+      tags: [guests]
+      summary: Update guest
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGuestBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Guest"
+    delete:
+      operationId: deleteGuest
+      tags: [guests]
+      summary: Remove a guest
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /messages:
+    get:
+      operationId: listMessages
+      tags: [messages]
+      summary: List secure quantum messages
+      parameters:
+        - name: roomId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+    post:
+      operationId: sendMessage
+      tags: [messages]
+      summary: Send a quantum-encrypted message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageBody"
+      responses:
+        "201":
+          description: Sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /messages/{id}:
+    delete:
+      operationId: deleteMessage
+      tags: [messages]
+      summary: Delete a message
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /energy/upgrades:
+    get:
+      operationId: listEnergyUpgrades
+      tags: [energy]
+      summary: List available quantum energy upgrades
+      responses:
+        "200":
+          description: Upgrades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EnergyUpgrade"
+    post:
+      operationId: createEnergyUpgrade
+      tags: [energy]
+      summary: Create an energy upgrade tier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEnergyUpgradeBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnergyUpgrade"
+
+  /energy/upgrades/{id}:
+    delete:
+      operationId: deleteEnergyUpgrade
+      tags: [energy]
+      summary: Delete an energy upgrade
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /energy/guest-upgrades:
+    get:
+      operationId: listGuestUpgrades
+      tags: [energy]
+      summary: List all guest energy upgrade purchases
+      responses:
+        "200":
+          description: Guest upgrades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GuestUpgrade"
+    post:
+      operationId: purchaseUpgrade
+      tags: [energy]
+      summary: Guest purchases an energy upgrade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurchaseUpgradeBody"
+      responses:
+        "201":
+          description: Purchased
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuestUpgrade"
+
+  /teleport:
+    post:
+      operationId: teleportGuest
+      tags: [teleport]
+      summary: Teleport a guest between rooms
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeleportBody"
+      responses:
+        "200":
+          description: Teleported
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeleportResult"
+
+  /teleport/history:
+    get:
+      operationId: listTeleportHistory
+      tags: [teleport]
+      summary: List teleport history
+      responses:
+        "200":
+          description: History
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeleportEvent"
+
+  /transactions:
+    get:
+      operationId: listTransactions
+      tags: [transactions]
+      summary: List all transactions
+      responses:
+        "200":
+          description: Transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /transactions/cashout:
+    post:
+      operationId: requestCashout
+      tags: [transactions]
+      summary: Owner requests a cashout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CashoutBody"
+      responses:
+        "201":
+          description: Cashout recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get lounge settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoungeSettings"
+    put:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update lounge settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSettingsBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoungeSettings"
+
+  /stats/overview:
+    get:
+      operationId: getStats
+      tags: [lounge]
+      summary: Owner dashboard stats
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +500,383 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    LoginBody:
+      type: object
+      properties:
+        password:
+          type: string
+      required: [password]
+
+    AuthStatus:
+      type: object
+      properties:
+        isOwner:
+          type: boolean
+        loungeName:
+          type: string
+          nullable: true
+      required: [isOwner]
+
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        theme:
+          type: string
+        frequency:
+          type: number
+        capacity:
+          type: integer
+        guestCount:
+          type: integer
+        isOpen:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, theme, frequency, capacity, guestCount, isOpen, createdAt]
+
+    CreateRoomBody:
+      type: object
+      properties:
+        name:
+          type: string
+        theme:
+          type: string
+        frequency:
+          type: number
+        capacity:
+          type: integer
+        isOpen:
+          type: boolean
+      required: [name, theme, frequency, capacity]
+
+    UpdateRoomBody:
+      type: object
+      properties:
+        name:
+          type: string
+        theme:
+          type: string
+        frequency:
+          type: number
+        capacity:
+          type: integer
+        isOpen:
+          type: boolean
+
+    Guest:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        vibe:
+          type: string
+        energyLevel:
+          type: string
+          description: basic | charged | quantum | transcended
+        roomId:
+          type: integer
+          nullable: true
+        roomName:
+          type: string
+          nullable: true
+        status:
+          type: string
+          description: active | checked_out
+        feePaid:
+          type: number
+        checkedInAt:
+          type: string
+          format: date-time
+        checkedOutAt:
+          type: string
+          format: date-time
+          nullable: true
+      required: [id, name, vibe, energyLevel, status, feePaid, checkedInAt]
+
+    CreateGuestBody:
+      type: object
+      properties:
+        name:
+          type: string
+        vibe:
+          type: string
+        roomId:
+          type: integer
+          nullable: true
+      required: [name, vibe]
+
+    UpdateGuestBody:
+      type: object
+      properties:
+        status:
+          type: string
+        roomId:
+          type: integer
+          nullable: true
+        vibe:
+          type: string
+        energyLevel:
+          type: string
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        senderName:
+          type: string
+        content:
+          type: string
+          description: Quantum-encrypted message content
+        roomId:
+          type: integer
+          nullable: true
+        roomName:
+          type: string
+          nullable: true
+        isEncrypted:
+          type: boolean
+        quantumSignature:
+          type: string
+          description: Unique quantum hash for message verification
+        sentAt:
+          type: string
+          format: date-time
+      required: [id, senderName, content, isEncrypted, quantumSignature, sentAt]
+
+    SendMessageBody:
+      type: object
+      properties:
+        senderName:
+          type: string
+        content:
+          type: string
+        roomId:
+          type: integer
+          nullable: true
+      required: [senderName, content]
+
+    EnergyUpgrade:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          description: e.g. Quantum Boost, Portal Ignition, Cosmic Transcendence
+        level:
+          type: string
+          description: charged | quantum | transcended
+        description:
+          type: string
+        price:
+          type: number
+        color:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, level, description, price, color, createdAt]
+
+    CreateEnergyUpgradeBody:
+      type: object
+      properties:
+        name:
+          type: string
+        level:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        color:
+          type: string
+      required: [name, level, description, price, color]
+
+    GuestUpgrade:
+      type: object
+      properties:
+        id:
+          type: integer
+        guestId:
+          type: integer
+        guestName:
+          type: string
+        upgradeId:
+          type: integer
+        upgradeName:
+          type: string
+        level:
+          type: string
+        amountPaid:
+          type: number
+        purchasedAt:
+          type: string
+          format: date-time
+      required: [id, guestId, guestName, upgradeId, upgradeName, level, amountPaid, purchasedAt]
+
+    PurchaseUpgradeBody:
+      type: object
+      properties:
+        guestId:
+          type: integer
+        upgradeId:
+          type: integer
+      required: [guestId, upgradeId]
+
+    TeleportBody:
+      type: object
+      properties:
+        guestId:
+          type: integer
+        fromRoomId:
+          type: integer
+          nullable: true
+        toRoomId:
+          type: integer
+      required: [guestId, toRoomId]
+
+    TeleportResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        guest:
+          $ref: "#/components/schemas/Guest"
+        message:
+          type: string
+        quantumShift:
+          type: number
+          description: Energy shift value from the teleport
+      required: [success, guest, message, quantumShift]
+
+    TeleportEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        guestId:
+          type: integer
+        guestName:
+          type: string
+        fromRoomId:
+          type: integer
+          nullable: true
+        fromRoomName:
+          type: string
+          nullable: true
+        toRoomId:
+          type: integer
+        toRoomName:
+          type: string
+        quantumShift:
+          type: number
+        teleportedAt:
+          type: string
+          format: date-time
+      required: [id, guestId, guestName, toRoomId, toRoomName, quantumShift, teleportedAt]
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          description: house_fee | energy_upgrade | cashout
+        amount:
+          type: number
+        description:
+          type: string
+        guestId:
+          type: integer
+          nullable: true
+        guestName:
+          type: string
+          nullable: true
+        status:
+          type: string
+          description: completed | pending
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, type, amount, description, status, createdAt]
+
+    CashoutBody:
+      type: object
+      properties:
+        amount:
+          type: number
+        notes:
+          type: string
+          nullable: true
+      required: [amount]
+
+    LoungeSettings:
+      type: object
+      properties:
+        loungeName:
+          type: string
+        tagline:
+          type: string
+        houseFee:
+          type: number
+        ownerName:
+          type: string
+        theme:
+          type: string
+        isOpen:
+          type: boolean
+      required: [loungeName, tagline, houseFee, ownerName, theme, isOpen]
+
+    UpdateSettingsBody:
+      type: object
+      properties:
+        loungeName:
+          type: string
+        tagline:
+          type: string
+        houseFee:
+          type: number
+        ownerName:
+          type: string
+        theme:
+          type: string
+        isOpen:
+          type: boolean
+
+    DashboardStats:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+        availableBalance:
+          type: number
+        totalCashedOut:
+          type: number
+        activeGuests:
+          type: integer
+        totalGuests:
+          type: integer
+        openRooms:
+          type: integer
+        totalRooms:
+          type: integer
+        totalMessages:
+          type: integer
+        totalTeleports:
+          type: integer
+        recentTransactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transaction"
+      required: [totalRevenue, availableBalance, totalCashedOut, activeGuests, totalGuests, openRooms, totalRooms, totalMessages, totalTeleports, recentTransactions]

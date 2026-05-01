@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Quantum Lounge"
+version = "1.0.0"
+id = "artifacts/quantum-lounge"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18896
+
+[services.development]
+run = "pnpm --filter @workspace/quantum-lounge run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/quantum-lounge", "run", "build" ]
+publicDir = "artifacts/quantum-lounge/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18896"
+BASE_PATH = "/"
