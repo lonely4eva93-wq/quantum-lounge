@@ -52,9 +52,11 @@ Tables: rooms, guests, messages, energy_upgrades, guest_upgrades, teleport_event
 ## GitHub
 
 - Repository: https://github.com/lonely4eva93-wq/quantum-lounge
-- Remote name: `github`
-- To push future changes: `git push https://YOUR_USERNAME:$GITHUB_PERSONAL_ACCESS_TOKEN@github.com/lonely4eva93-wq/quantum-lounge.git main`
-- GitHub OAuth integration was dismissed; PAT stored as `GITHUB_PERSONAL_ACCESS_TOKEN` secret
+- Remote name: `github` (URL: https://github.com/lonely4eva93-wq/quantum-lounge.git, no credentials embedded)
+- PAT stored as `GITHUB_PERSONAL_ACCESS_TOKEN` secret in Replit — must be set for sync to work
+- **Automatic sync**: every task merge triggers `scripts/post-merge.sh`, which runs `scripts/github-sync.sh` to push `HEAD` to `github/main`. A git `post-commit` hook is also installed by `scripts/install-git-hooks.sh` so direct git commits also sync automatically.
+- **Fresh clone / manual setup**: run `bash scripts/install-git-hooks.sh` once to install the post-commit hook; push manually via `bash scripts/github-sync.sh`
+- Sync uses fetch + `--force-with-lease` (Replit is the source of truth); credentials are injected via a short-lived helper script, never via the remote URL
 
 ## Notes
 
