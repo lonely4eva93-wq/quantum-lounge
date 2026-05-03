@@ -179,6 +179,10 @@ export default function SmartContractsPage() {
             <p>
               Quantum Lounge operates a multi-chain compatible credit and rewards framework, with primary support for the <strong className="text-foreground">XRP Ledger (XRPL)</strong> and planned interoperability with other compatible blockchain networks.
             </p>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground mt-4 mb-2">Same Wallet Address Requirement</h3>
+            <p className="text-muted-foreground">
+              For treasury, payout, withdrawal, and smart-contract settlement flows, the recipient wallet address must match the same wallet address on record for the associated account, guest, or treasury profile unless William Brown explicitly authorizes a different destination in writing. Any deviation from the recorded wallet address is considered invalid until updated in the platform registry.
+            </p>
             <h3 className="text-xs font-bold uppercase tracking-widest text-foreground mt-4 mb-2">Supported Networks</h3>
             <div className="space-y-2">
               {[

@@ -18,4 +18,5 @@ export * from "./events";
 export * from "./chat";
 export * from "./security";
 export * from "./xrp";
+export * from "./treasury";
 // Note: conversations.ts intentionally not exported — OpenAI template, not used in Quantum Lounge
