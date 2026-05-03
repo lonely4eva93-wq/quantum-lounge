@@ -105,6 +105,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
     { href: "/", label: "Lobby", icon: Home },
     { href: "/rooms", label: "Rooms", icon: Grid },
     { href: "/leaderboard", label: "Rank", icon: Trophy },
+    { href: "/stats", label: "Stats", icon: BarChart2 },
     { href: "/messages", label: "Comms", icon: MessageSquare },
     { href: "/teleport", label: "Teleport", icon: ArrowRightLeft },
     { href: "/energy", label: "Energy", icon: Zap },

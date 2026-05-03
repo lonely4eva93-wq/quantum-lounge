@@ -22,6 +22,7 @@ import Referrals from "@/pages/referrals";
 import PremiumMessages from "@/pages/premium-messages";
 import Events from "@/pages/events";
 import GuestProfilePage from "@/pages/guest-profile-page";
+import StatsPage from "@/pages/stats";
 
 // Owner Pages
 import OwnerLogin from "@/pages/owner/login";
@@ -103,6 +104,7 @@ function Router() {
       <Route path="/premium-messages" component={() => <PublicRoute component={PremiumMessages} />} />
       <Route path="/events" component={() => <PublicRoute component={Events} />} />
       <Route path="/guest/:id" component={() => <PublicRoute component={GuestProfilePage} />} />
+      <Route path="/stats" component={() => <PublicRoute component={StatsPage} />} />
 
       {/* Owner Auth */}
       <Route path="/owner" component={OwnerLogin} />
