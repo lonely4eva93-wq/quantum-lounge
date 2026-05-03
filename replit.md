@@ -49,6 +49,13 @@ Tables: rooms, guests, messages, energy_upgrades, guest_upgrades, teleport_event
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 
+## GitHub
+
+- Repository: https://github.com/lonely4eva93-wq/quantum-lounge
+- Remote name: `github`
+- To push future changes: `git push https://YOUR_USERNAME:$GITHUB_PERSONAL_ACCESS_TOKEN@github.com/lonely4eva93-wq/quantum-lounge.git main`
+- GitHub OAuth integration was dismissed; PAT stored as `GITHUB_PERSONAL_ACCESS_TOKEN` secret
+
 ## Notes
 
 - orval zod output uses mode: "single" (not "split") to avoid duplicate type exports
