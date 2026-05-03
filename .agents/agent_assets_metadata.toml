@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "oEoEBLK5d5IpLuRJhIqc7"
+uri = "file://artifacts/quantum-lounge/public/opengraph.png"
+type = "image"
+title = "quantum lounge og banner"

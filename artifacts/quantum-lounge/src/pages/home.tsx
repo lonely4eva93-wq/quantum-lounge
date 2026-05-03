@@ -2,7 +2,7 @@ import { useListGuests, useListRooms, useCreateGuest, useUpdateGuest, getListGue
 import { useState, memo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Radio, Activity, Fingerprint, LogIn, Rss, LogOut } from "lucide-react";
+import { Zap, Radio, Activity, Fingerprint, LogIn, Rss, LogOut, Share2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -137,6 +137,24 @@ export default function Home() {
         roomId: roomId === "none" ? undefined : Number(roomId),
       },
     });
+  };
+
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const url = window.location.origin;
+    const text = "I'm at the Quantum Lounge — an immersive digital nightclub with frequency rooms, teleportation, and cosmic oracle readings. Enter the void:";
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Quantum Lounge", text, url });
+      } catch {
+        // dismissed
+      }
+    } else {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const activeGuests = guests?.filter((g) => g.status === "active") || [];
