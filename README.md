@@ -2,9 +2,9 @@
 
 > **An immersive quantum-themed digital nightclub.** Frequency rooms. Teleportation. Cosmic oracle readings. 8 revenue streams. Built to vibe.
 
-🔗 **[Enter the Void → Live App](https://0dd01955-a631-47fe-8406-9f3d00b2e79a-00-35qhcdw4ozthd.riker.replit.dev/)**
+🔗 **[Enter the Void → Live App](https://quantum-lounge--seximan271993.replit.app/)**
 
-![Quantum Lounge](https://0dd01955-a631-47fe-8406-9f3d00b2e79a-00-35qhcdw4ozthd.riker.replit.dev/opengraph.png)
+![Quantum Lounge](https://quantum-lounge--seximan271993.replit.app/opengraph.png)
 
 ---
 
@@ -105,7 +105,7 @@ lib/
 
 ## 🌐 Live Demo
 
-👉 **[quantum-lounge.riker.replit.dev](https://0dd01955-a631-47fe-8406-9f3d00b2e79a-00-35qhcdw4ozthd.riker.replit.dev/)**
+👉 **[quantum-lounge.riker.replit.dev](https://quantum-lounge--seximan271993.replit.app/)**
 
 No sign-up. No cover charge. Just enter an alias and a vibe.
 
