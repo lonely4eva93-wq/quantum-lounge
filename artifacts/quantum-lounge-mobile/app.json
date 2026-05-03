@@ -1,22 +1,27 @@
 {
   "expo": {
-    "name": "Quantum Lounge Mobile",
+    "name": "Quantum Lounge",
     "slug": "quantum-lounge-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "quantum-lounge-mobile",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#080410",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#080410"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.quantumlounge.app"
     },
-    "android": {},
+    "android": {
+      "package": "com.quantumlounge.app",
+      "backgroundColor": "#080410"
+    },
     "web": {
       "favicon": "./assets/images/icon.png"
     },

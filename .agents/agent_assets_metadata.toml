@@ -6,3 +6,9 @@ id = "oEoEBLK5d5IpLuRJhIqc7"
 uri = "file://artifacts/quantum-lounge/public/opengraph.png"
 type = "image"
 title = "quantum lounge og banner"
+
+[[generated]]
+id = "by2hl9Vqvljxm4vf2Fzwy"
+uri = "file://artifacts/quantum-lounge-mobile/assets/images/icon.png"
+type = "image"
+title = "quantum lounge mobile icon"

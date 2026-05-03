@@ -84,8 +84,26 @@ Tables: rooms, guests, messages, energy_upgrades, guest_upgrades, teleport_event
 - **Fresh clone / manual setup**: run `bash scripts/install-git-hooks.sh` once to install the post-commit hook; push manually via `bash scripts/github-sync.sh`
 - Sync uses fetch + `--force-with-lease` (Replit is the source of truth); credentials are injected via a short-lived helper script, never via the remote URL
 
+## Mobile App (Expo)
+
+- Artifact: `artifacts/quantum-lounge-mobile` at preview path `/mobile`
+- 5 tabs: Home (check-in), Rooms (browse + teleport), Ranks (leaderboard), Events, Profile (badges + share)
+- Connects to same API server via `EXPO_PUBLIC_DOMAIN`
+- iOS App Store publishing via Replit Expo Launch (click Publish)
+- Android publishing NOT supported on Replit
+- Bundle ID: `com.quantumlounge.app`
+- Test on device: scan QR code from preview bar with Expo Go app
+
+## Email Notifications
+
+- Resend integration dismissed by user — no email integration active
+- If user provides RESEND_API_KEY, store as secret and implement via Resend REST API directly
+- Note added here as reminder for future sessions
+
 ## Notes
 
 - orval zod output uses mode: "single" (not "split") to avoid duplicate type exports
 - lib/api-zod/src/index.ts only exports from ./generated/api (not ./generated/types)
 - Session secret uses SESSION_SECRET env var
+- DB tables added: guest_achievements, room_events, room_chat (beyond original 16 tables)
+- WebSocket server runs on /api/ws path (ws package installed in api-server)
