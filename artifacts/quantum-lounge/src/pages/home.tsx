@@ -95,6 +95,7 @@ export default function Home() {
 
   const [name, setName] = useState("");
   const [vibe, setVibe] = useState("");
+  const [bio, setBio] = useState("");
   const [roomId, setRoomId] = useState<string>("none");
   const [profileGuestId, setProfileGuestId] = useState<number | null>(null);
 
@@ -108,6 +109,7 @@ export default function Home() {
         });
         setName("");
         setVibe("");
+        setBio("");
         setRoomId("none");
       },
     },
@@ -134,6 +136,7 @@ export default function Home() {
       data: {
         name,
         vibe,
+        bio,
         roomId: roomId === "none" ? undefined : Number(roomId),
       },
     });
@@ -224,6 +227,23 @@ export default function Home() {
                 className="bg-black/50 border-primary/30 focus:border-primary text-white font-mono"
                 required
               />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-mono text-primary/70 uppercase tracking-widest">
+                Quantum Bio <span className="text-muted-foreground">(optional)</span>
+              </label>
+              <textarea
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Tell the void who you are..."
+                maxLength={280}
+                rows={3}
+                className="w-full bg-black/50 border border-primary/30 focus:border-primary text-white font-mono text-sm rounded-md px-3 py-2 resize-none outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
+              />
+              <div className="text-right text-[10px] font-mono text-muted-foreground/40">
+                {bio.length}/280
+              </div>
             </div>
 
             <div className="space-y-2">

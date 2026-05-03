@@ -43,6 +43,9 @@ import OwnerEventsPage from "@/pages/owner/owner-events";
 import OwnerSecurity from "@/pages/owner/security";
 import LegalPage from "@/pages/legal";
 import NdaPage from "@/pages/nda";
+import SmartContractsPage from "@/pages/smart-contracts";
+import PitchPage from "@/pages/pitch";
+import CryptoPage from "@/pages/crypto";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -128,6 +131,9 @@ function Router() {
 
       <Route path="/legal" component={LegalPage} />
       <Route path="/nda" component={NdaPage} />
+      <Route path="/smart-contracts" component={SmartContractsPage} />
+      <Route path="/crypto" component={() => <PublicRoute component={CryptoPage} />} />
+      <Route path="/pitch" component={PitchPage} />
 
       <Route component={NotFound} />
     </Switch>

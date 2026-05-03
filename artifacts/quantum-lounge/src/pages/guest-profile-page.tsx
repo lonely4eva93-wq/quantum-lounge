@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import {
   Share2, Check, Zap, Trophy, Star,
   DollarSign, ArrowRightLeft, MessageSquare,
-  Eye, Crown, Rocket, Lock, Heart, Activity,
+  Eye, Crown, Rocket, Lock, Heart, Activity, FileText,
 } from "lucide-react";
+import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 
@@ -15,6 +16,7 @@ interface GuestData {
   id: number;
   name: string;
   vibe: string;
+  bio: string;
   energyLevel: string;
   status: string;
   checkedInAt: string;
@@ -189,6 +191,16 @@ export default function GuestProfilePage() {
               </div>
             </div>
 
+            {/* Bio */}
+            {guest.bio && (
+              <div className="mb-5 p-3 rounded-lg bg-white/5 border border-white/10">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1.5 flex items-center gap-1">
+                  <FileText className="w-3 h-3" /> Quantum Bio
+                </div>
+                <p className="text-sm text-foreground/80 leading-relaxed">{guest.bio}</p>
+              </div>
+            )}
+
             {/* Status badges */}
             <div className="flex flex-wrap gap-2 mb-5">
               <span className={`text-xs font-mono uppercase tracking-widest px-3 py-1 rounded-full border ${color}`}>
@@ -322,14 +334,22 @@ export default function GuestProfilePage() {
           </Card>
         )}
 
-        {/* Share button */}
-        <button
-          onClick={handleShare}
-          className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-primary/30 bg-primary/10 text-primary font-mono text-sm uppercase tracking-widest hover:bg-primary/20 transition-colors"
-        >
-          {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-          {copied ? "Link Copied" : "Share Profile"}
-        </button>
+        {/* Action buttons */}
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Link href="/energy">
+            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-cyan-400/30 bg-cyan-400/10 text-cyan-400 font-mono text-sm uppercase tracking-widest hover:bg-cyan-400/20 transition-colors">
+              <Zap className="w-4 h-4" />
+              Upgrade Energy
+            </button>
+          </Link>
+          <button
+            onClick={handleShare}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-primary/30 bg-primary/10 text-primary font-mono text-sm uppercase tracking-widest hover:bg-primary/20 transition-colors"
+          >
+            {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+            {copied ? "Copied!" : "Share"}
+          </button>
+        </div>
       </motion.div>
     </div>
   );

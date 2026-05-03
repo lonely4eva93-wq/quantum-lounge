@@ -98,9 +98,10 @@ router.post("/", async (req, res) => {
   const settings = await db.select().from(settingsTable).limit(1);
   const houseFee = settings[0]?.houseFee ?? 15;
 
+  const bio = req.body.bio ?? "";
   const [guest] = await db
     .insert(guestsTable)
-    .values({ name, vibe, roomId: roomId ?? null, feePaid: houseFee, status: "active", energyLevel: "basic" })
+    .values({ name, vibe, bio, roomId: roomId ?? null, feePaid: houseFee, status: "active", energyLevel: "basic" })
     .returning();
 
   await db.insert(transactionsTable).values({
@@ -122,6 +123,7 @@ router.put("/:id", async (req, res) => {
   if (roomId !== undefined) updates.roomId = roomId;
   if (vibe !== undefined) updates.vibe = vibe;
   if (energyLevel !== undefined) updates.energyLevel = energyLevel;
+  if (req.body.bio !== undefined) updates.bio = req.body.bio;
   if (status === "checked_out") updates.checkedOutAt = new Date();
   const [guest] = await db.update(guestsTable).set(updates).where(eq(guestsTable.id, id)).returning();
   if (!guest) return res.status(404).json({ error: "Guest not found" });

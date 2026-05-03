@@ -26,6 +26,7 @@ import chatRouter from "./chat";
 import hiveMindRouter from "./hive-mind";
 import oracleAiRouter from "./oracle-ai";
 import securityRouter from "./security";
+import xrpRouter from "./xrp";
 
 const router: IRouter = Router();
 
@@ -56,5 +57,6 @@ router.use("/chat", chatRouter);
 router.use("/hive-mind", hiveMindRouter);
 router.use("/oracle", oracleAiRouter);
 router.use("/security", securityRouter);
+router.use("/xrp", xrpRouter);
 
 export default router;

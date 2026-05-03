@@ -7,6 +7,7 @@ export const guestsTable = pgTable("guests", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   vibe: text("vibe").notNull().default("curious"),
+  bio: text("bio").notNull().default(""),
   energyLevel: text("energy_level").notNull().default("basic"),
   roomId: integer("room_id").references(() => roomsTable.id),
   status: text("status").notNull().default("active"),
