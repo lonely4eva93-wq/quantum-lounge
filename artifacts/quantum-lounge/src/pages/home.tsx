@@ -1,8 +1,8 @@
-import { useListGuests, useListRooms, useCreateGuest, getListGuestsQueryKey, useGetRecentActivity, getGetRecentActivityQueryKey } from "@workspace/api-client-react";
+import { useListGuests, useListRooms, useCreateGuest, useUpdateGuest, getListGuestsQueryKey, getListRoomsQueryKey, useGetRecentActivity, getGetRecentActivityQueryKey } from "@workspace/api-client-react";
 import { useState, memo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Radio, Activity, Fingerprint, LogIn, Rss } from "lucide-react";
+import { Zap, Radio, Activity, Fingerprint, LogIn, Rss, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -29,9 +29,13 @@ const activityTypeLabels: Record<string, string> = {
 const GuestListItem = memo(function GuestListItem({
   guest,
   onNameClick,
+  onCheckOut,
+  checkingOut,
 }: {
   guest: { id: number; name: string; vibe: string; energyLevel: string; roomName?: string | null };
   onNameClick: (id: number) => void;
+  onCheckOut: (id: number) => void;
+  checkingOut: boolean;
 }) {
   return (
     <motion.div
@@ -59,8 +63,18 @@ const GuestListItem = memo(function GuestListItem({
           </span>
         </div>
       </div>
-      <div className="text-xs font-mono text-accent/70">
-        {guest.roomName || "Lobby"}
+      <div className="flex items-center gap-3">
+        <div className="text-xs font-mono text-accent/70">
+          {guest.roomName || "Lobby"}
+        </div>
+        <button
+          onClick={() => onCheckOut(guest.id)}
+          disabled={checkingOut}
+          className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border border-white/10 text-muted-foreground hover:text-red-400 hover:border-red-400/30 hover:bg-red-400/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          <LogOut className="w-3 h-3" />
+          Out
+        </button>
       </div>
     </motion.div>
   );
@@ -91,6 +105,19 @@ export default function Home() {
         setName("");
         setVibe("");
         setRoomId("none");
+      },
+    },
+  });
+
+  const checkOutGuest = useUpdateGuest({
+    mutation: {
+      onSuccess: (guest) => {
+        queryClient.invalidateQueries({ queryKey: getListGuestsQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getListRoomsQueryKey() });
+        toast({
+          title: "Departure Logged",
+          description: `${guest.name} has left the Quantum Lounge.`,
+        });
       },
     },
   });
@@ -301,6 +328,8 @@ export default function Home() {
                         key={guest.id}
                         guest={guest}
                         onNameClick={setProfileGuestId}
+                        onCheckOut={(id) => checkOutGuest.mutate({ id, data: { status: "checked_out" } })}
+                        checkingOut={checkOutGuest.isPending}
                       />
                     ))}
                   </AnimatePresence>

@@ -430,11 +430,19 @@ export const GetStatsResponse = zod.object({
 /**
  * @summary Top guests ranked by energy, upgrades, and teleports
  */
+export const GetLeaderboardQueryParams = zod.object({
+  includeAll: zod.coerce
+    .boolean()
+    .optional()
+    .describe("When true, include checked-out guests in the leaderboard"),
+});
+
 export const GetLeaderboardResponseItem = zod.object({
   rank: zod.number(),
   guestId: zod.number(),
   guestName: zod.string(),
   energyLevel: zod.string(),
+  status: zod.string(),
   upgradeCount: zod.number(),
   teleportCount: zod.number(),
   score: zod.number(),

@@ -498,6 +498,13 @@ paths:
       operationId: getLeaderboard
       tags: [lounge]
       summary: Top guests ranked by energy, upgrades, and teleports
+      parameters:
+        - name: includeAll
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: When true, include checked-out guests in the leaderboard
       responses:
         "200":
           description: Leaderboard
@@ -922,13 +929,15 @@ components:
           type: string
         energyLevel:
           type: string
+        status:
+          type: string
         upgradeCount:
           type: integer
         teleportCount:
           type: integer
         score:
           type: number
-      required: [rank, guestId, guestName, energyLevel, upgradeCount, teleportCount, score]
+      required: [rank, guestId, guestName, energyLevel, status, upgradeCount, teleportCount, score]
 
     ActivityEvent:
       type: object

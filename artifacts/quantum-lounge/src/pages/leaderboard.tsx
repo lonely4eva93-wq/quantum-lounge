@@ -1,7 +1,7 @@
 import { useGetLeaderboard } from "@workspace/api-client-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Zap, ArrowRightLeft, ShoppingBag } from "lucide-react";
+import { Trophy, Zap, ArrowRightLeft, ShoppingBag, Users, Radio } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CountUp } from "@/components/count-up";
 import { GlitchText } from "@/components/glitch-text";
@@ -22,7 +22,8 @@ const rankIcons: Record<number, string> = {
 };
 
 export default function Leaderboard() {
-  const { data: leaderboard, isLoading } = useGetLeaderboard();
+  const [includeAll, setIncludeAll] = useState(false);
+  const { data: leaderboard, isLoading } = useGetLeaderboard({ includeAll: includeAll || undefined });
   const [profileGuestId, setProfileGuestId] = useState<number | null>(null);
 
   return (
@@ -46,6 +47,31 @@ export default function Leaderboard() {
           </p>
         </motion.div>
       </section>
+
+      <div className="flex justify-center">
+        <div className="inline-flex rounded-lg border border-primary/20 bg-black/30 p-1 gap-1">
+          <button
+            onClick={() => setIncludeAll(false)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-xs font-mono uppercase tracking-widest transition-all ${
+              !includeAll
+                ? "bg-primary/20 text-primary border border-primary/40"
+                : "text-muted-foreground hover:text-white"
+            }`}
+          >
+            <Radio className="w-3 h-3" /> Active Only
+          </button>
+          <button
+            onClick={() => setIncludeAll(true)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-xs font-mono uppercase tracking-widest transition-all ${
+              includeAll
+                ? "bg-primary/20 text-primary border border-primary/40"
+                : "text-muted-foreground hover:text-white"
+            }`}
+          >
+            <Users className="w-3 h-3" /> All Time
+          </button>
+        </div>
+      </div>
 
       <Card className="bg-card/40 backdrop-blur-md border-primary/20 overflow-hidden">
         <div className="p-6">
@@ -99,12 +125,19 @@ export default function Leaderboard() {
                     </div>
 
                     <div>
-                      <button
-                        onClick={() => setProfileGuestId(entry.guestId)}
-                        className="font-bold text-white tracking-wide hover:text-primary transition-colors cursor-pointer"
-                      >
-                        {entry.guestName}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setProfileGuestId(entry.guestId)}
+                          className="font-bold text-white tracking-wide hover:text-primary transition-colors cursor-pointer"
+                        >
+                          {entry.guestName}
+                        </button>
+                        {entry.status === "checked_out" && (
+                          <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded border border-red-400/20 text-red-400/60 bg-red-400/5">
+                            out
+                          </span>
+                        )}
+                      </div>
                       <div className={`text-xs font-mono uppercase tracking-widest px-2 py-0.5 rounded border inline-block mt-1 ${energyColors[entry.energyLevel] ?? energyColors.basic}`}>
                         {entry.energyLevel}
                       </div>

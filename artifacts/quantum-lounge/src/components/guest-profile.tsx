@@ -146,11 +146,20 @@ export function GuestProfile({ guestId, onClose }: GuestProfileProps) {
 
               <div>
                 <h3 className="text-sm font-display font-bold uppercase tracking-widest text-white/50 mb-2 flex items-center gap-2">
-                  <Zap className="w-4 h-4" /> Check-in
+                  <Zap className="w-4 h-4" /> Timeline
                 </h3>
                 {guest && (
-                  <div className="text-xs font-mono text-muted-foreground p-3 bg-black/20 rounded-lg border border-white/5">
-                    {format(new Date(guest.checkedInAt), "MMM d, yyyy HH:mm:ss")}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs font-mono p-3 bg-black/20 rounded-lg border border-white/5">
+                      <span className="text-green-400/70 uppercase tracking-widest">Checked In</span>
+                      <span className="text-muted-foreground">{format(new Date(guest.checkedInAt), "MMM d, yyyy HH:mm:ss")}</span>
+                    </div>
+                    {guest.checkedOutAt && (
+                      <div className="flex items-center justify-between text-xs font-mono p-3 bg-black/20 rounded-lg border border-red-400/10">
+                        <span className="text-red-400/70 uppercase tracking-widest">Checked Out</span>
+                        <span className="text-muted-foreground">{format(new Date(guest.checkedOutAt), "MMM d, yyyy HH:mm:ss")}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

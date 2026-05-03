@@ -208,6 +208,7 @@ export interface LeaderboardEntry {
   guestId: number;
   guestName: string;
   energyLevel: string;
+  status: string;
   upgradeCount: number;
   teleportCount: number;
   score: number;
@@ -225,4 +226,11 @@ export interface ActivityEvent {
 
 export type ListMessagesParams = {
   roomId?: number;
+};
+
+export type GetLeaderboardParams = {
+  /**
+   * When true, include checked-out guests in the leaderboard
+   */
+  includeAll?: boolean;
 };

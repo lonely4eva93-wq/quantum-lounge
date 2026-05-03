@@ -53,7 +53,7 @@ router.get("/overview", async (_req, res) => {
   });
 });
 
-router.get("/leaderboard", async (_req, res) => {
+router.get("/leaderboard", async (req, res) => {
   const energyTier: Record<string, number> = {
     basic: 0,
     charged: 1,
@@ -61,10 +61,11 @@ router.get("/leaderboard", async (_req, res) => {
     transcended: 3,
   };
 
-  const guests = await db
-    .select()
-    .from(guestsTable)
-    .where(eq(guestsTable.status, "active"));
+  const includeAll = req.query.includeAll === "true";
+
+  const guests = includeAll
+    ? await db.select().from(guestsTable)
+    : await db.select().from(guestsTable).where(eq(guestsTable.status, "active"));
 
   const [upgradeCountRows] = await Promise.all([
     db
@@ -90,6 +91,7 @@ router.get("/leaderboard", async (_req, res) => {
       guestId: g.id,
       guestName: g.name,
       energyLevel: g.energyLevel,
+      status: g.status,
       upgradeCount: upgCnt,
       teleportCount: telCnt,
       score,
