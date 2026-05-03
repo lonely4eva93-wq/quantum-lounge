@@ -81,8 +81,12 @@ const GuestListItem = memo(function GuestListItem({
 });
 
 export default function Home() {
-  const { data: guests, isLoading: loadingGuests } = useListGuests();
-  const { data: rooms, isLoading: loadingRooms } = useListRooms();
+  const { data: guests, isLoading: loadingGuests } = useListGuests({
+    query: { refetchInterval: 20_000, queryKey: getListGuestsQueryKey() },
+  });
+  const { data: rooms, isLoading: loadingRooms } = useListRooms({
+    query: { refetchInterval: 20_000, queryKey: getListRoomsQueryKey() },
+  });
   const { data: activity, isLoading: loadingActivity } = useGetRecentActivity({
     query: { refetchInterval: 10_000, queryKey: getGetRecentActivityQueryKey() },
   });
@@ -263,32 +267,38 @@ export default function Home() {
                   No vectors currently open.
                 </div>
               ) : (
-                openRooms.slice(0, 4).map((room) => (
-                  <motion.div
-                    key={room.id}
-                    whileHover={{ scale: 1.02 }}
-                    className="p-4 rounded-xl border border-secondary/20 bg-secondary/5 hover:bg-secondary/10 transition-colors cursor-pointer group"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-display font-bold text-lg text-white group-hover:text-secondary transition-colors">
-                        {room.name}
-                      </h3>
-                      <div className="px-2 py-1 rounded bg-black/50 border border-secondary/30 text-secondary text-xs font-mono">
-                        {room.frequency}Hz
+                <AnimatePresence>
+                  {openRooms.slice(0, 4).map((room) => (
+                    <motion.div
+                      key={room.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.85 }}
+                      transition={{ duration: 0.3 }}
+                      whileHover={{ scale: 1.02 }}
+                      className="p-4 rounded-xl border border-secondary/20 bg-secondary/5 hover:bg-secondary/10 transition-colors cursor-pointer group"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-display font-bold text-lg text-white group-hover:text-secondary transition-colors">
+                          {room.name}
+                        </h3>
+                        <div className="px-2 py-1 rounded bg-black/50 border border-secondary/30 text-secondary text-xs font-mono">
+                          {room.frequency}Hz
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground mb-3">{room.theme}</div>
-                    <div className="mb-3">
-                      <FrequencyWaveform frequency={room.frequency} color="rgb(255,0,255)" barCount={14} height={28} />
-                    </div>
-                    <div className="flex justify-between items-center text-xs font-mono text-secondary/70">
-                      <span>Capacity: {room.guestCount}/{room.capacity}</span>
-                      <Link href="/rooms" className="text-secondary hover:text-white transition-colors">
-                        Inspect →
-                      </Link>
-                    </div>
-                  </motion.div>
-                ))
+                      <div className="text-sm text-muted-foreground mb-3">{room.theme}</div>
+                      <div className="mb-3">
+                        <FrequencyWaveform frequency={room.frequency} color="rgb(255,0,255)" barCount={14} height={28} />
+                      </div>
+                      <div className="flex justify-between items-center text-xs font-mono text-secondary/70">
+                        <span>Capacity: {room.guestCount}/{room.capacity}</span>
+                        <Link href="/rooms" className="text-secondary hover:text-white transition-colors">
+                          Inspect →
+                        </Link>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               )}
             </div>
           </section>

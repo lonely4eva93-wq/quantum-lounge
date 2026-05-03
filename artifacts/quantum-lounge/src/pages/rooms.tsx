@@ -1,7 +1,7 @@
 import { useListRooms, useListGuests, useUpdateGuest, getListGuestsQueryKey, getListRoomsQueryKey } from "@workspace/api-client-react";
 import { memo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Grid, Radio, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,8 +32,12 @@ const RoomCardSkeleton = memo(function RoomCardSkeleton() {
 });
 
 export default function Rooms() {
-  const { data: rooms, isLoading: loadingRooms } = useListRooms();
-  const { data: guests, isLoading: loadingGuests } = useListGuests();
+  const { data: rooms, isLoading: loadingRooms } = useListRooms({
+    query: { refetchInterval: 20_000, queryKey: getListRoomsQueryKey() },
+  });
+  const { data: guests, isLoading: loadingGuests } = useListGuests({
+    query: { refetchInterval: 20_000, queryKey: getListGuestsQueryKey() },
+  });
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -97,12 +101,14 @@ export default function Rooms() {
             <p className="text-secondary/70 font-mono uppercase tracking-widest">No active vectors detected.</p>
           </div>
         ) : (
-          openRooms.map((room, index) => (
+          <AnimatePresence>
+          {openRooms.map((room, index) => (
             <motion.div
               key={room.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ delay: index * 0.1, duration: 0.3 }}
               className="group relative"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-primary/10 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -187,7 +193,8 @@ export default function Rooms() {
                 </div>
               </Card>
             </motion.div>
-          ))
+          ))}
+          </AnimatePresence>
         )}
       </div>
 
