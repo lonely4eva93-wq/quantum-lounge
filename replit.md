@@ -26,21 +26,47 @@ An immersive social quantum lounge — a dark, neon-lit digital nightclub where 
 
 ## Key Pages
 
-- `/` — Public lobby: guest check-in, live room display, send quantum messages
+### Public
+- `/` — Lobby: guest check-in, live room display, send quantum messages
 - `/rooms` — Browse all quantum frequency rooms
 - `/messages` — Quantum-encrypted message feed
 - `/teleport` — Teleport guests between rooms
 - `/energy` — Energy upgrade marketplace
-- `/owner` — Owner login
-- `/owner/dashboard` — Revenue stats, balance, cashout
+- `/vip` — VIP membership tiers (Silver $9.99, Gold $19.99, Cosmic $29.99/mo)
+- `/oracle` — Quantum Oracle cosmic readings ($2.99 each)
+- `/boost` — Leaderboard position boosts ($4.99/hr)
+- `/referrals` — Create and apply referral codes
+- `/premium-messages` — Encrypted premium DMs ($0.99 each)
+
+### Owner
+- `/owner` — Owner login (password: `quantum2024`)
+- `/owner/dashboard` — Revenue stats, balance, cashout, income stream mini-grid
+- `/owner/revenue` — Full income breakdown across all 8 revenue streams
 - `/owner/guests` — Guest management
 - `/owner/rooms` — Room CRUD
+- `/owner/vip` — VIP membership management
+- `/owner/rentals` — Room rental bookings ($50/hr)
+- `/owner/tips` — Tip log with house cut tracking
+- `/owner/sponsored` — Room sponsorship management
+- `/owner/referrals` — Referral code management
+- `/owner/boosts` — Leaderboard boost tracking
 - `/owner/transactions` — Full transaction ledger
-- `/owner/settings` — Lounge settings (name, house fee, theme, open/close)
+- `/owner/settings` — Lounge settings
+
+## Revenue Streams (8 total)
+
+1. **VIP Memberships** — Monthly subscriptions (Silver/Gold/Cosmic)
+2. **Room Rentals** — Private event bookings at $50/hr
+3. **Tipping** — Guest-to-guest tips with 15% house cut
+4. **Quantum Oracle** — Cosmic readings at $2.99 each
+5. **Sponsored Rooms** — Brand sponsorships per room/month
+6. **Referral Codes** — Guest referral rewards system
+7. **Premium Messages** — Encrypted DMs at $0.99 each
+8. **Leaderboard Boosts** — Position amplification at $4.99/hr
 
 ## Database Schema
 
-Tables: rooms, guests, messages, energy_upgrades, guest_upgrades, teleport_events, transactions, settings
+Tables: rooms, guests, messages, energy_upgrades, guest_upgrades, teleport_events, transactions, settings, vip_memberships, room_rentals, tips, oracle_readings, sponsored_rooms, referral_codes, premium_messages, leaderboard_boosts
 
 ## Key Commands
 

@@ -15,6 +15,14 @@ tags:
   - name: messages
   - name: energy
   - name: teleport
+  - name: vip
+  - name: rentals
+  - name: tips
+  - name: oracle
+  - name: sponsored
+  - name: referrals
+  - name: premium-messages
+  - name: boosts
 
 paths:
   /healthz:
@@ -530,6 +538,393 @@ paths:
                 items:
                   $ref: "#/components/schemas/ActivityEvent"
 
+  /memberships:
+    get:
+      operationId: listVipMemberships
+      tags: [vip]
+      summary: List all VIP memberships
+      responses:
+        "200":
+          description: Memberships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VipMembership"
+    post:
+      operationId: createVipMembership
+      tags: [vip]
+      summary: Subscribe to VIP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVipMembershipBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VipMembership"
+
+  /memberships/{id}:
+    get:
+      operationId: getVipMembership
+      tags: [vip]
+      summary: Get a membership
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Membership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VipMembership"
+    put:
+      operationId: updateVipMembership
+      tags: [vip]
+      summary: Update membership status
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VipMembership"
+    delete:
+      operationId: cancelVipMembership
+      tags: [vip]
+      summary: Cancel membership
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Cancelled
+
+  /rentals:
+    get:
+      operationId: listRoomRentals
+      tags: [rentals]
+      summary: List all room rentals
+      responses:
+        "200":
+          description: Rentals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoomRental"
+    post:
+      operationId: createRoomRental
+      tags: [rentals]
+      summary: Book a private room rental
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoomRentalBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomRental"
+
+  /rentals/{id}:
+    put:
+      operationId: updateRoomRental
+      tags: [rentals]
+      summary: Update a rental
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomRental"
+    delete:
+      operationId: deleteRoomRental
+      tags: [rentals]
+      summary: Cancel a rental
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /tips:
+    get:
+      operationId: listTips
+      tags: [tips]
+      summary: List all tips
+      responses:
+        "200":
+          description: Tips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tip"
+    post:
+      operationId: createTip
+      tags: [tips]
+      summary: Send a tip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTipBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tip"
+
+  /oracle/readings:
+    get:
+      operationId: listOracleReadings
+      tags: [oracle]
+      summary: List oracle readings
+      responses:
+        "200":
+          description: Readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OracleReading"
+    post:
+      operationId: createOracleReading
+      tags: [oracle]
+      summary: Get a quantum oracle reading
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOracleReadingBody"
+      responses:
+        "201":
+          description: Reading generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OracleReading"
+
+  /sponsored-rooms:
+    get:
+      operationId: listSponsoredRooms
+      tags: [sponsored]
+      summary: List sponsored rooms
+      responses:
+        "200":
+          description: Sponsorships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SponsoredRoom"
+    post:
+      operationId: createSponsoredRoom
+      tags: [sponsored]
+      summary: Create a room sponsorship
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSponsoredRoomBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SponsoredRoom"
+
+  /sponsored-rooms/{id}:
+    delete:
+      operationId: deleteSponsoredRoom
+      tags: [sponsored]
+      summary: End a sponsorship
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Ended
+
+  /referrals/codes:
+    get:
+      operationId: listReferralCodes
+      tags: [referrals]
+      summary: List referral codes
+      responses:
+        "200":
+          description: Codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReferralCode"
+    post:
+      operationId: createReferralCode
+      tags: [referrals]
+      summary: Create a referral code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReferralCodeBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReferralCode"
+
+  /referrals/apply:
+    post:
+      operationId: applyReferralCode
+      tags: [referrals]
+      summary: Apply a referral code at check-in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplyReferralBody"
+      responses:
+        "200":
+          description: Applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReferralResult"
+
+  /premium-messages:
+    get:
+      operationId: listPremiumMessages
+      tags: [premium-messages]
+      summary: List premium messages
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PremiumMessage"
+    post:
+      operationId: sendPremiumMessage
+      tags: [premium-messages]
+      summary: Send a premium encrypted direct message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePremiumMessageBody"
+      responses:
+        "201":
+          description: Sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PremiumMessage"
+
+  /leaderboard-boosts:
+    get:
+      operationId: listLeaderboardBoosts
+      tags: [boosts]
+      summary: List active leaderboard boosts
+      responses:
+        "200":
+          description: Boosts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardBoost"
+    post:
+      operationId: createLeaderboardBoost
+      tags: [boosts]
+      summary: Purchase a leaderboard boost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLeaderboardBoostBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaderboardBoost"
+
+  /leaderboard-boosts/{id}:
+    delete:
+      operationId: deleteLeaderboardBoost
+      tags: [boosts]
+      summary: Remove a boost
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /income/summary:
+    get:
+      operationId: getIncomeSummary
+      tags: [vip]
+      summary: Owner income breakdown across all revenue streams
+      responses:
+        "200":
+          description: Income summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomeSummary"
+
 components:
   schemas:
     HealthStatus:
@@ -958,3 +1353,220 @@ components:
           type: string
           format: date-time
       required: [id, type, guestName, detail, timestamp]
+
+    VipMembership:
+      type: object
+      properties:
+        id: { type: integer }
+        guestName: { type: string }
+        email: { type: string }
+        tier: { type: string, description: "silver | gold | cosmic" }
+        pricePerMonth: { type: number }
+        status: { type: string, description: "active | cancelled | expired" }
+        perks: { type: string }
+        startedAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, guestName, email, tier, pricePerMonth, status, perks, startedAt, createdAt]
+
+    CreateVipMembershipBody:
+      type: object
+      properties:
+        guestName: { type: string }
+        email: { type: string }
+        tier: { type: string }
+      required: [guestName, email, tier]
+
+    RoomRental:
+      type: object
+      properties:
+        id: { type: integer }
+        roomId: { type: integer }
+        roomName: { type: string }
+        renterName: { type: string }
+        eventName: { type: string }
+        startTime: { type: string, format: date-time }
+        endTime: { type: string, format: date-time }
+        priceTotal: { type: number }
+        status: { type: string, description: "confirmed | cancelled | completed" }
+        notes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, roomId, roomName, renterName, eventName, startTime, endTime, priceTotal, status, createdAt]
+
+    CreateRoomRentalBody:
+      type: object
+      properties:
+        roomId: { type: integer }
+        renterName: { type: string }
+        eventName: { type: string }
+        startTime: { type: string, format: date-time }
+        endTime: { type: string, format: date-time }
+        notes: { type: string, nullable: true }
+      required: [roomId, renterName, eventName, startTime, endTime]
+
+    Tip:
+      type: object
+      properties:
+        id: { type: integer }
+        fromGuestName: { type: string }
+        toGuestName: { type: string, nullable: true }
+        toHouse: { type: boolean }
+        amount: { type: number }
+        houseCut: { type: number }
+        message: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, fromGuestName, toHouse, amount, houseCut, createdAt]
+
+    CreateTipBody:
+      type: object
+      properties:
+        fromGuestName: { type: string }
+        toGuestName: { type: string, nullable: true }
+        toHouse: { type: boolean }
+        amount: { type: number }
+        message: { type: string, nullable: true }
+      required: [fromGuestName, toHouse, amount]
+
+    OracleReading:
+      type: object
+      properties:
+        id: { type: integer }
+        guestName: { type: string }
+        vibe: { type: string }
+        energyLevel: { type: string }
+        reading: { type: string }
+        frequency: { type: number }
+        cosmicSignature: { type: string }
+        price: { type: number }
+        createdAt: { type: string, format: date-time }
+      required: [id, guestName, vibe, energyLevel, reading, frequency, cosmicSignature, price, createdAt]
+
+    CreateOracleReadingBody:
+      type: object
+      properties:
+        guestName: { type: string }
+        vibe: { type: string }
+        energyLevel: { type: string }
+      required: [guestName, vibe, energyLevel]
+
+    SponsoredRoom:
+      type: object
+      properties:
+        id: { type: integer }
+        roomId: { type: integer }
+        roomName: { type: string }
+        sponsorName: { type: string }
+        brandColor: { type: string }
+        tagline: { type: string }
+        pricePerMonth: { type: number }
+        status: { type: string, description: "active | expired | cancelled" }
+        startsAt: { type: string, format: date-time }
+        endsAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, roomId, roomName, sponsorName, brandColor, tagline, pricePerMonth, status, startsAt, createdAt]
+
+    CreateSponsoredRoomBody:
+      type: object
+      properties:
+        roomId: { type: integer }
+        sponsorName: { type: string }
+        brandColor: { type: string }
+        tagline: { type: string }
+        pricePerMonth: { type: number }
+      required: [roomId, sponsorName, brandColor, tagline, pricePerMonth]
+
+    ReferralCode:
+      type: object
+      properties:
+        id: { type: integer }
+        code: { type: string }
+        ownerGuestName: { type: string }
+        discountAmount: { type: number }
+        usesCount: { type: integer }
+        maxUses: { type: integer, nullable: true }
+        rewardAmount: { type: number }
+        isActive: { type: boolean }
+        createdAt: { type: string, format: date-time }
+      required: [id, code, ownerGuestName, discountAmount, usesCount, rewardAmount, isActive, createdAt]
+
+    CreateReferralCodeBody:
+      type: object
+      properties:
+        ownerGuestName: { type: string }
+        discountAmount: { type: number }
+        rewardAmount: { type: number }
+        maxUses: { type: integer, nullable: true }
+      required: [ownerGuestName, discountAmount, rewardAmount]
+
+    ApplyReferralBody:
+      type: object
+      properties:
+        code: { type: string }
+        guestName: { type: string }
+      required: [code, guestName]
+
+    ReferralResult:
+      type: object
+      properties:
+        success: { type: boolean }
+        discount: { type: number }
+        message: { type: string }
+        code: { $ref: "#/components/schemas/ReferralCode" }
+      required: [success, discount, message, code]
+
+    PremiumMessage:
+      type: object
+      properties:
+        id: { type: integer }
+        fromGuestName: { type: string }
+        toGuestName: { type: string }
+        content: { type: string }
+        price: { type: number }
+        quantumSignature: { type: string }
+        isRead: { type: boolean }
+        sentAt: { type: string, format: date-time }
+      required: [id, fromGuestName, toGuestName, content, price, quantumSignature, isRead, sentAt]
+
+    CreatePremiumMessageBody:
+      type: object
+      properties:
+        fromGuestName: { type: string }
+        toGuestName: { type: string }
+        content: { type: string }
+      required: [fromGuestName, toGuestName, content]
+
+    LeaderboardBoost:
+      type: object
+      properties:
+        id: { type: integer }
+        guestName: { type: string }
+        price: { type: number }
+        expiresAt: { type: string, format: date-time }
+        isActive: { type: boolean }
+        createdAt: { type: string, format: date-time }
+      required: [id, guestName, price, expiresAt, isActive, createdAt]
+
+    CreateLeaderboardBoostBody:
+      type: object
+      properties:
+        guestName: { type: string }
+        durationHours: { type: integer }
+      required: [guestName, durationHours]
+
+    IncomeSummary:
+      type: object
+      properties:
+        vipRevenue: { type: number }
+        rentalRevenue: { type: number }
+        tipRevenue: { type: number }
+        oracleRevenue: { type: number }
+        sponsorRevenue: { type: number }
+        premiumMessageRevenue: { type: number }
+        boostRevenue: { type: number }
+        energyUpgradeRevenue: { type: number }
+        houseFeeRevenue: { type: number }
+        totalRevenue: { type: number }
+        activeVipMembers: { type: integer }
+        activeSponsors: { type: integer }
+        activeBoosts: { type: integer }
+      required: [vipRevenue, rentalRevenue, tipRevenue, oracleRevenue, sponsorRevenue, premiumMessageRevenue, boostRevenue, energyUpgradeRevenue, houseFeeRevenue, totalRevenue, activeVipMembers, activeSponsors, activeBoosts]

@@ -3,7 +3,11 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useGetAuthMe, useOwnerLogout, getGetAuthMeQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, LayoutDashboard, Users, Grid, ListOrdered, Settings, Zap, ArrowRightLeft, MessageSquare, Home, Trophy, Menu } from "lucide-react";
+import {
+  LogOut, LayoutDashboard, Users, Grid, ListOrdered, Settings, Zap, ArrowRightLeft,
+  MessageSquare, Home, Trophy, Menu, Crown, Calendar, Heart, Eye, Megaphone,
+  Share2, Rocket, DollarSign, Lock,
+} from "lucide-react";
 import { Starfield } from "@/components/starfield";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
 
@@ -20,8 +24,15 @@ export function OwnerLayout({ children }: { children: ReactNode }) {
 
   const navItems = [
     { href: "/owner/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/owner/revenue", label: "Revenue", icon: DollarSign },
     { href: "/owner/guests", label: "Guests", icon: Users },
     { href: "/owner/rooms", label: "Rooms", icon: Grid },
+    { href: "/owner/vip", label: "VIP", icon: Crown },
+    { href: "/owner/rentals", label: "Rentals", icon: Calendar },
+    { href: "/owner/tips", label: "Tips", icon: Heart },
+    { href: "/owner/sponsored", label: "Sponsored", icon: Megaphone },
+    { href: "/owner/referrals", label: "Referrals", icon: Share2 },
+    { href: "/owner/boosts", label: "Boosts", icon: Rocket },
     { href: "/owner/transactions", label: "Transactions", icon: ListOrdered },
     { href: "/owner/settings", label: "Settings", icon: Settings },
   ];
@@ -32,7 +43,7 @@ export function OwnerLayout({ children }: { children: ReactNode }) {
       <motion.aside
         initial={{ x: -250 }}
         animate={{ x: 0 }}
-        className="w-64 border-r border-border/50 bg-card/30 backdrop-blur-xl flex flex-col z-20"
+        className="w-64 border-r border-border/50 bg-card/30 backdrop-blur-xl flex flex-col z-20 overflow-y-auto"
       >
         <div className="p-6 border-b border-border/50">
           <Link href="/" className="flex items-center gap-2">
@@ -41,20 +52,20 @@ export function OwnerLayout({ children }: { children: ReactNode }) {
           </Link>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => {
             const isActive = location === item.href;
             return (
               <Link key={item.href} href={item.href}>
                 <div
-                  className={`flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-300 cursor-pointer ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-300 cursor-pointer ${
                     isActive
                       ? "bg-primary/20 text-primary border border-primary/30 shadow-[0_0_15px_rgba(0,243,255,0.15)]"
                       : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                   }`}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <item.icon className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-medium text-sm">{item.label}</span>
                 </div>
               </Link>
             );
@@ -94,6 +105,11 @@ export function PublicLayout({ children }: { children: ReactNode }) {
     { href: "/messages", label: "Comms", icon: MessageSquare },
     { href: "/teleport", label: "Teleport", icon: ArrowRightLeft },
     { href: "/energy", label: "Energy", icon: Zap },
+    { href: "/vip", label: "VIP", icon: Crown },
+    { href: "/oracle", label: "Oracle", icon: Eye },
+    { href: "/boost", label: "Boost", icon: Rocket },
+    { href: "/referrals", label: "Refer", icon: Share2 },
+    { href: "/premium-messages", label: "DM", icon: Lock },
   ];
 
   return (
@@ -115,20 +131,20 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Desktop nav — scrollable if many items */}
+          <nav className="hidden md:flex items-center gap-0.5 overflow-x-auto max-w-[600px]">
             {navItems.map((item) => {
               const isActive = location === item.href;
               return (
                 <Link key={item.href} href={item.href}>
                   <div
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all duration-300 cursor-pointer whitespace-nowrap ${
                       isActive
                         ? "bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]"
                         : "text-muted-foreground hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    <item.icon className="w-4 h-4" />
+                    <item.icon className="w-3.5 h-3.5" />
                     {item.label}
                   </div>
                 </Link>
@@ -179,7 +195,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 </div>
 
                 {/* Drawer nav links */}
-                <nav className="p-4 space-y-1">
+                <nav className="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-160px)]">
                   {navItems.map((item) => {
                     const isActive = location === item.href;
                     return (

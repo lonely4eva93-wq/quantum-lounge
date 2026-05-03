@@ -10,6 +10,15 @@ import transactionsRouter from "./transactions";
 import settingsRouter from "./settings";
 import statsRouter from "./stats";
 import activityRouter from "./activity";
+import vipRouter from "./vip";
+import rentalsRouter from "./rentals";
+import tipsRouter from "./tips";
+import oracleRouter from "./oracle";
+import sponsoredRouter from "./sponsored";
+import referralsRouter from "./referrals";
+import premiumMessagesRouter from "./premium-messages";
+import boostsRouter from "./boosts";
+import incomeRouter from "./income";
 
 const router: IRouter = Router();
 
@@ -24,5 +33,14 @@ router.use("/transactions", transactionsRouter);
 router.use("/settings", settingsRouter);
 router.use("/stats", statsRouter);
 router.use("/activity", activityRouter);
+router.use("/memberships", vipRouter);
+router.use("/rentals", rentalsRouter);
+router.use("/tips", tipsRouter);
+router.use("/oracle", oracleRouter);
+router.use("/sponsored-rooms", sponsoredRouter);
+router.use("/referrals", referralsRouter);
+router.use("/premium-messages", premiumMessagesRouter);
+router.use("/leaderboard-boosts", boostsRouter);
+router.use("/income", incomeRouter);
 
 export default router;

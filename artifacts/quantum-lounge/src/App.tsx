@@ -15,6 +15,11 @@ import Messages from "@/pages/messages";
 import Teleport from "@/pages/teleport";
 import Energy from "@/pages/energy";
 import Leaderboard from "@/pages/leaderboard";
+import Vip from "@/pages/vip";
+import Oracle from "@/pages/oracle";
+import Boost from "@/pages/boost";
+import Referrals from "@/pages/referrals";
+import PremiumMessages from "@/pages/premium-messages";
 
 // Owner Pages
 import OwnerLogin from "@/pages/owner/login";
@@ -23,6 +28,13 @@ import OwnerGuests from "@/pages/owner/guests";
 import OwnerRooms from "@/pages/owner/rooms";
 import OwnerTransactions from "@/pages/owner/transactions";
 import OwnerSettings from "@/pages/owner/settings";
+import OwnerRevenue from "@/pages/owner/revenue";
+import OwnerVip from "@/pages/owner/vip";
+import OwnerRentals from "@/pages/owner/rentals";
+import OwnerTips from "@/pages/owner/tips";
+import OwnerSponsored from "@/pages/owner/sponsored";
+import OwnerReferrals from "@/pages/owner/referrals";
+import OwnerBoosts from "@/pages/owner/boosts";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -77,6 +89,11 @@ function Router() {
       <Route path="/messages" component={() => <PublicRoute component={Messages} />} />
       <Route path="/teleport" component={() => <PublicRoute component={Teleport} />} />
       <Route path="/energy" component={() => <PublicRoute component={Energy} />} />
+      <Route path="/vip" component={() => <PublicRoute component={Vip} />} />
+      <Route path="/oracle" component={() => <PublicRoute component={Oracle} />} />
+      <Route path="/boost" component={() => <PublicRoute component={Boost} />} />
+      <Route path="/referrals" component={() => <PublicRoute component={Referrals} />} />
+      <Route path="/premium-messages" component={() => <PublicRoute component={PremiumMessages} />} />
 
       {/* Owner Auth */}
       <Route path="/owner" component={OwnerLogin} />
@@ -87,6 +104,13 @@ function Router() {
       <Route path="/owner/rooms" component={() => <ProtectedRoute component={OwnerRooms} />} />
       <Route path="/owner/transactions" component={() => <ProtectedRoute component={OwnerTransactions} />} />
       <Route path="/owner/settings" component={() => <ProtectedRoute component={OwnerSettings} />} />
+      <Route path="/owner/revenue" component={() => <ProtectedRoute component={OwnerRevenue} />} />
+      <Route path="/owner/vip" component={() => <ProtectedRoute component={OwnerVip} />} />
+      <Route path="/owner/rentals" component={() => <ProtectedRoute component={OwnerRentals} />} />
+      <Route path="/owner/tips" component={() => <ProtectedRoute component={OwnerTips} />} />
+      <Route path="/owner/sponsored" component={() => <ProtectedRoute component={OwnerSponsored} />} />
+      <Route path="/owner/referrals" component={() => <ProtectedRoute component={OwnerReferrals} />} />
+      <Route path="/owner/boosts" component={() => <ProtectedRoute component={OwnerBoosts} />} />
 
       <Route component={NotFound} />
     </Switch>

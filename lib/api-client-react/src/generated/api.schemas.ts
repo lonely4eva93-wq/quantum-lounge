@@ -224,6 +224,189 @@ export interface ActivityEvent {
   timestamp: string;
 }
 
+export interface VipMembership {
+  id: number;
+  guestName: string;
+  email: string;
+  /** silver | gold | cosmic */
+  tier: string;
+  pricePerMonth: number;
+  /** active | cancelled | expired */
+  status: string;
+  perks: string;
+  startedAt: string;
+  expiresAt?: string | null;
+  createdAt: string;
+}
+
+export interface CreateVipMembershipBody {
+  guestName: string;
+  email: string;
+  tier: string;
+}
+
+export interface RoomRental {
+  id: number;
+  roomId: number;
+  roomName: string;
+  renterName: string;
+  eventName: string;
+  startTime: string;
+  endTime: string;
+  priceTotal: number;
+  /** confirmed | cancelled | completed */
+  status: string;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface CreateRoomRentalBody {
+  roomId: number;
+  renterName: string;
+  eventName: string;
+  startTime: string;
+  endTime: string;
+  notes?: string | null;
+}
+
+export interface Tip {
+  id: number;
+  fromGuestName: string;
+  toGuestName?: string | null;
+  toHouse: boolean;
+  amount: number;
+  houseCut: number;
+  message?: string | null;
+  createdAt: string;
+}
+
+export interface CreateTipBody {
+  fromGuestName: string;
+  toGuestName?: string | null;
+  toHouse: boolean;
+  amount: number;
+  message?: string | null;
+}
+
+export interface OracleReading {
+  id: number;
+  guestName: string;
+  vibe: string;
+  energyLevel: string;
+  reading: string;
+  frequency: number;
+  cosmicSignature: string;
+  price: number;
+  createdAt: string;
+}
+
+export interface CreateOracleReadingBody {
+  guestName: string;
+  vibe: string;
+  energyLevel: string;
+}
+
+export interface SponsoredRoom {
+  id: number;
+  roomId: number;
+  roomName: string;
+  sponsorName: string;
+  brandColor: string;
+  tagline: string;
+  pricePerMonth: number;
+  /** active | expired | cancelled */
+  status: string;
+  startsAt: string;
+  endsAt?: string | null;
+  createdAt: string;
+}
+
+export interface CreateSponsoredRoomBody {
+  roomId: number;
+  sponsorName: string;
+  brandColor: string;
+  tagline: string;
+  pricePerMonth: number;
+}
+
+export interface ReferralCode {
+  id: number;
+  code: string;
+  ownerGuestName: string;
+  discountAmount: number;
+  usesCount: number;
+  maxUses?: number | null;
+  rewardAmount: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface CreateReferralCodeBody {
+  ownerGuestName: string;
+  discountAmount: number;
+  rewardAmount: number;
+  maxUses?: number | null;
+}
+
+export interface ApplyReferralBody {
+  code: string;
+  guestName: string;
+}
+
+export interface ReferralResult {
+  success: boolean;
+  discount: number;
+  message: string;
+  code: ReferralCode;
+}
+
+export interface PremiumMessage {
+  id: number;
+  fromGuestName: string;
+  toGuestName: string;
+  content: string;
+  price: number;
+  quantumSignature: string;
+  isRead: boolean;
+  sentAt: string;
+}
+
+export interface CreatePremiumMessageBody {
+  fromGuestName: string;
+  toGuestName: string;
+  content: string;
+}
+
+export interface LeaderboardBoost {
+  id: number;
+  guestName: string;
+  price: number;
+  expiresAt: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface CreateLeaderboardBoostBody {
+  guestName: string;
+  durationHours: number;
+}
+
+export interface IncomeSummary {
+  vipRevenue: number;
+  rentalRevenue: number;
+  tipRevenue: number;
+  oracleRevenue: number;
+  sponsorRevenue: number;
+  premiumMessageRevenue: number;
+  boostRevenue: number;
+  energyUpgradeRevenue: number;
+  houseFeeRevenue: number;
+  totalRevenue: number;
+  activeVipMembers: number;
+  activeSponsors: number;
+  activeBoosts: number;
+}
+
 export type ListMessagesParams = {
   roomId?: number;
 };
@@ -233,4 +416,12 @@ export type GetLeaderboardParams = {
    * When true, include checked-out guests in the leaderboard
    */
   includeAll?: boolean;
+};
+
+export type UpdateVipMembershipBody = {
+  status?: string;
+};
+
+export type UpdateRoomRentalBody = {
+  status?: string;
 };

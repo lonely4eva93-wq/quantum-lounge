@@ -463,3 +463,363 @@ export const GetRecentActivityResponseItem = zod.object({
 export const GetRecentActivityResponse = zod.array(
   GetRecentActivityResponseItem,
 );
+
+/**
+ * @summary List all VIP memberships
+ */
+export const ListVipMembershipsResponseItem = zod.object({
+  id: zod.number(),
+  guestName: zod.string(),
+  email: zod.string(),
+  tier: zod.string().describe("silver | gold | cosmic"),
+  pricePerMonth: zod.number(),
+  status: zod.string().describe("active | cancelled | expired"),
+  perks: zod.string(),
+  startedAt: zod.coerce.date(),
+  expiresAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListVipMembershipsResponse = zod.array(
+  ListVipMembershipsResponseItem,
+);
+
+/**
+ * @summary Subscribe to VIP
+ */
+export const CreateVipMembershipBody = zod.object({
+  guestName: zod.string(),
+  email: zod.string(),
+  tier: zod.string(),
+});
+
+/**
+ * @summary Get a membership
+ */
+export const GetVipMembershipParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetVipMembershipResponse = zod.object({
+  id: zod.number(),
+  guestName: zod.string(),
+  email: zod.string(),
+  tier: zod.string().describe("silver | gold | cosmic"),
+  pricePerMonth: zod.number(),
+  status: zod.string().describe("active | cancelled | expired"),
+  perks: zod.string(),
+  startedAt: zod.coerce.date(),
+  expiresAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Update membership status
+ */
+export const UpdateVipMembershipParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateVipMembershipBody = zod.object({
+  status: zod.string().optional(),
+});
+
+export const UpdateVipMembershipResponse = zod.object({
+  id: zod.number(),
+  guestName: zod.string(),
+  email: zod.string(),
+  tier: zod.string().describe("silver | gold | cosmic"),
+  pricePerMonth: zod.number(),
+  status: zod.string().describe("active | cancelled | expired"),
+  perks: zod.string(),
+  startedAt: zod.coerce.date(),
+  expiresAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Cancel membership
+ */
+export const CancelVipMembershipParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List all room rentals
+ */
+export const ListRoomRentalsResponseItem = zod.object({
+  id: zod.number(),
+  roomId: zod.number(),
+  roomName: zod.string(),
+  renterName: zod.string(),
+  eventName: zod.string(),
+  startTime: zod.coerce.date(),
+  endTime: zod.coerce.date(),
+  priceTotal: zod.number(),
+  status: zod.string().describe("confirmed | cancelled | completed"),
+  notes: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListRoomRentalsResponse = zod.array(ListRoomRentalsResponseItem);
+
+/**
+ * @summary Book a private room rental
+ */
+export const CreateRoomRentalBody = zod.object({
+  roomId: zod.number(),
+  renterName: zod.string(),
+  eventName: zod.string(),
+  startTime: zod.coerce.date(),
+  endTime: zod.coerce.date(),
+  notes: zod.string().nullish(),
+});
+
+/**
+ * @summary Update a rental
+ */
+export const UpdateRoomRentalParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateRoomRentalBody = zod.object({
+  status: zod.string().optional(),
+});
+
+export const UpdateRoomRentalResponse = zod.object({
+  id: zod.number(),
+  roomId: zod.number(),
+  roomName: zod.string(),
+  renterName: zod.string(),
+  eventName: zod.string(),
+  startTime: zod.coerce.date(),
+  endTime: zod.coerce.date(),
+  priceTotal: zod.number(),
+  status: zod.string().describe("confirmed | cancelled | completed"),
+  notes: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Cancel a rental
+ */
+export const DeleteRoomRentalParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List all tips
+ */
+export const ListTipsResponseItem = zod.object({
+  id: zod.number(),
+  fromGuestName: zod.string(),
+  toGuestName: zod.string().nullish(),
+  toHouse: zod.boolean(),
+  amount: zod.number(),
+  houseCut: zod.number(),
+  message: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListTipsResponse = zod.array(ListTipsResponseItem);
+
+/**
+ * @summary Send a tip
+ */
+export const CreateTipBody = zod.object({
+  fromGuestName: zod.string(),
+  toGuestName: zod.string().nullish(),
+  toHouse: zod.boolean(),
+  amount: zod.number(),
+  message: zod.string().nullish(),
+});
+
+/**
+ * @summary List oracle readings
+ */
+export const ListOracleReadingsResponseItem = zod.object({
+  id: zod.number(),
+  guestName: zod.string(),
+  vibe: zod.string(),
+  energyLevel: zod.string(),
+  reading: zod.string(),
+  frequency: zod.number(),
+  cosmicSignature: zod.string(),
+  price: zod.number(),
+  createdAt: zod.coerce.date(),
+});
+export const ListOracleReadingsResponse = zod.array(
+  ListOracleReadingsResponseItem,
+);
+
+/**
+ * @summary Get a quantum oracle reading
+ */
+export const CreateOracleReadingBody = zod.object({
+  guestName: zod.string(),
+  vibe: zod.string(),
+  energyLevel: zod.string(),
+});
+
+/**
+ * @summary List sponsored rooms
+ */
+export const ListSponsoredRoomsResponseItem = zod.object({
+  id: zod.number(),
+  roomId: zod.number(),
+  roomName: zod.string(),
+  sponsorName: zod.string(),
+  brandColor: zod.string(),
+  tagline: zod.string(),
+  pricePerMonth: zod.number(),
+  status: zod.string().describe("active | expired | cancelled"),
+  startsAt: zod.coerce.date(),
+  endsAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListSponsoredRoomsResponse = zod.array(
+  ListSponsoredRoomsResponseItem,
+);
+
+/**
+ * @summary Create a room sponsorship
+ */
+export const CreateSponsoredRoomBody = zod.object({
+  roomId: zod.number(),
+  sponsorName: zod.string(),
+  brandColor: zod.string(),
+  tagline: zod.string(),
+  pricePerMonth: zod.number(),
+});
+
+/**
+ * @summary End a sponsorship
+ */
+export const DeleteSponsoredRoomParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List referral codes
+ */
+export const ListReferralCodesResponseItem = zod.object({
+  id: zod.number(),
+  code: zod.string(),
+  ownerGuestName: zod.string(),
+  discountAmount: zod.number(),
+  usesCount: zod.number(),
+  maxUses: zod.number().nullish(),
+  rewardAmount: zod.number(),
+  isActive: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+export const ListReferralCodesResponse = zod.array(
+  ListReferralCodesResponseItem,
+);
+
+/**
+ * @summary Create a referral code
+ */
+export const CreateReferralCodeBody = zod.object({
+  ownerGuestName: zod.string(),
+  discountAmount: zod.number(),
+  rewardAmount: zod.number(),
+  maxUses: zod.number().nullish(),
+});
+
+/**
+ * @summary Apply a referral code at check-in
+ */
+export const ApplyReferralCodeBody = zod.object({
+  code: zod.string(),
+  guestName: zod.string(),
+});
+
+export const ApplyReferralCodeResponse = zod.object({
+  success: zod.boolean(),
+  discount: zod.number(),
+  message: zod.string(),
+  code: zod.object({
+    id: zod.number(),
+    code: zod.string(),
+    ownerGuestName: zod.string(),
+    discountAmount: zod.number(),
+    usesCount: zod.number(),
+    maxUses: zod.number().nullish(),
+    rewardAmount: zod.number(),
+    isActive: zod.boolean(),
+    createdAt: zod.coerce.date(),
+  }),
+});
+
+/**
+ * @summary List premium messages
+ */
+export const ListPremiumMessagesResponseItem = zod.object({
+  id: zod.number(),
+  fromGuestName: zod.string(),
+  toGuestName: zod.string(),
+  content: zod.string(),
+  price: zod.number(),
+  quantumSignature: zod.string(),
+  isRead: zod.boolean(),
+  sentAt: zod.coerce.date(),
+});
+export const ListPremiumMessagesResponse = zod.array(
+  ListPremiumMessagesResponseItem,
+);
+
+/**
+ * @summary Send a premium encrypted direct message
+ */
+export const SendPremiumMessageBody = zod.object({
+  fromGuestName: zod.string(),
+  toGuestName: zod.string(),
+  content: zod.string(),
+});
+
+/**
+ * @summary List active leaderboard boosts
+ */
+export const ListLeaderboardBoostsResponseItem = zod.object({
+  id: zod.number(),
+  guestName: zod.string(),
+  price: zod.number(),
+  expiresAt: zod.coerce.date(),
+  isActive: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+export const ListLeaderboardBoostsResponse = zod.array(
+  ListLeaderboardBoostsResponseItem,
+);
+
+/**
+ * @summary Purchase a leaderboard boost
+ */
+export const CreateLeaderboardBoostBody = zod.object({
+  guestName: zod.string(),
+  durationHours: zod.number(),
+});
+
+/**
+ * @summary Remove a boost
+ */
+export const DeleteLeaderboardBoostParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary Owner income breakdown across all revenue streams
+ */
+export const GetIncomeSummaryResponse = zod.object({
+  vipRevenue: zod.number(),
+  rentalRevenue: zod.number(),
+  tipRevenue: zod.number(),
+  oracleRevenue: zod.number(),
+  sponsorRevenue: zod.number(),
+  premiumMessageRevenue: zod.number(),
+  boostRevenue: zod.number(),
+  energyUpgradeRevenue: zod.number(),
+  houseFeeRevenue: zod.number(),
+  totalRevenue: zod.number(),
+  activeVipMembers: zod.number(),
+  activeSponsors: zod.number(),
+  activeBoosts: zod.number(),
+});
