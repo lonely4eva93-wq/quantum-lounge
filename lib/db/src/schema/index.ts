@@ -13,3 +13,6 @@ export * from "./sponsored";
 export * from "./referrals";
 export * from "./premium-messages";
 export * from "./boosts";
+export * from "./achievements";
+export * from "./events";
+export * from "./chat";

@@ -173,9 +173,19 @@ export default function Home() {
           <h1 className="text-5xl md:text-7xl font-display font-bold uppercase tracking-[0.2em] text-white mb-6 glow-text-primary">
             <GlitchText interval={5000}>Enter the Void</GlitchText>
           </h1>
-          <p className="text-xl text-primary/80 font-mono max-w-2xl mx-auto">
+          <p className="text-xl text-primary/80 font-mono max-w-2xl mx-auto mb-8">
             A nexus of social energy where particles entangle and vibrations synchronize.
           </p>
+          <motion.button
+            onClick={handleShare}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-primary/40 bg-primary/10 text-primary font-mono text-sm uppercase tracking-widest hover:bg-primary/20 hover:border-primary/60 transition-all"
+          >
+            {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+            {copied ? "Link Copied!" : "Share the Void"}
+          </motion.button>
         </motion.div>
       </section>
 

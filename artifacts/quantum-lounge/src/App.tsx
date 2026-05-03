@@ -20,6 +20,8 @@ import Oracle from "@/pages/oracle";
 import Boost from "@/pages/boost";
 import Referrals from "@/pages/referrals";
 import PremiumMessages from "@/pages/premium-messages";
+import Events from "@/pages/events";
+import GuestProfilePage from "@/pages/guest-profile-page";
 
 // Owner Pages
 import OwnerLogin from "@/pages/owner/login";
@@ -35,6 +37,8 @@ import OwnerTips from "@/pages/owner/tips";
 import OwnerSponsored from "@/pages/owner/sponsored";
 import OwnerReferrals from "@/pages/owner/referrals";
 import OwnerBoosts from "@/pages/owner/boosts";
+import OwnerAnalytics from "@/pages/owner/analytics";
+import OwnerEventsPage from "@/pages/owner/owner-events";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,6 +98,8 @@ function Router() {
       <Route path="/boost" component={() => <PublicRoute component={Boost} />} />
       <Route path="/referrals" component={() => <PublicRoute component={Referrals} />} />
       <Route path="/premium-messages" component={() => <PublicRoute component={PremiumMessages} />} />
+      <Route path="/events" component={() => <PublicRoute component={Events} />} />
+      <Route path="/guest/:id" component={() => <PublicRoute component={GuestProfilePage} />} />
 
       {/* Owner Auth */}
       <Route path="/owner" component={OwnerLogin} />
@@ -111,6 +117,8 @@ function Router() {
       <Route path="/owner/sponsored" component={() => <ProtectedRoute component={OwnerSponsored} />} />
       <Route path="/owner/referrals" component={() => <ProtectedRoute component={OwnerReferrals} />} />
       <Route path="/owner/boosts" component={() => <ProtectedRoute component={OwnerBoosts} />} />
+      <Route path="/owner/analytics" component={() => <ProtectedRoute component={OwnerAnalytics} />} />
+      <Route path="/owner/events" component={() => <ProtectedRoute component={OwnerEventsPage} />} />
 
       <Route component={NotFound} />
     </Switch>

@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   LogOut, LayoutDashboard, Users, Grid, ListOrdered, Settings, Zap, ArrowRightLeft,
   MessageSquare, Home, Trophy, Menu, Crown, Calendar, Heart, Eye, Megaphone,
-  Share2, Rocket, DollarSign, Lock,
+  Share2, Rocket, DollarSign, Lock, BarChart2,
 } from "lucide-react";
 import { Starfield } from "@/components/starfield";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
@@ -24,9 +24,11 @@ export function OwnerLayout({ children }: { children: ReactNode }) {
 
   const navItems = [
     { href: "/owner/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/owner/analytics", label: "Analytics", icon: BarChart2 },
     { href: "/owner/revenue", label: "Revenue", icon: DollarSign },
     { href: "/owner/guests", label: "Guests", icon: Users },
     { href: "/owner/rooms", label: "Rooms", icon: Grid },
+    { href: "/owner/events", label: "Events", icon: Calendar },
     { href: "/owner/vip", label: "VIP", icon: Crown },
     { href: "/owner/rentals", label: "Rentals", icon: Calendar },
     { href: "/owner/tips", label: "Tips", icon: Heart },
@@ -110,6 +112,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
     { href: "/boost", label: "Boost", icon: Rocket },
     { href: "/referrals", label: "Refer", icon: Share2 },
     { href: "/premium-messages", label: "DM", icon: Lock },
+    { href: "/events", label: "Events", icon: Calendar },
   ];
 
   return (

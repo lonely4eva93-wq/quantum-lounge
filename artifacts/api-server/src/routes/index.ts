@@ -19,6 +19,10 @@ import referralsRouter from "./referrals";
 import premiumMessagesRouter from "./premium-messages";
 import boostsRouter from "./boosts";
 import incomeRouter from "./income";
+import analyticsRouter from "./analytics";
+import achievementsRouter from "./achievements";
+import eventsRouter from "./events";
+import chatRouter from "./chat";
 
 const router: IRouter = Router();
 
@@ -42,5 +46,9 @@ router.use("/referrals", referralsRouter);
 router.use("/premium-messages", premiumMessagesRouter);
 router.use("/leaderboard-boosts", boostsRouter);
 router.use("/income", incomeRouter);
+router.use("/analytics", analyticsRouter);
+router.use("/achievements", achievementsRouter);
+router.use("/events", eventsRouter);
+router.use("/chat", chatRouter);
 
 export default router;

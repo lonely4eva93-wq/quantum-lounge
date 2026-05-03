@@ -2,7 +2,7 @@ import { useListRooms, useListGuests, useUpdateGuest, getListGuestsQueryKey, get
 import { memo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Grid, Radio, Zap } from "lucide-react";
+import { Grid, Radio, Zap, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -11,6 +11,140 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { FrequencyWaveform } from "@/components/frequency-waveform";
 import { GlitchText } from "@/components/glitch-text";
+import { RoomChat } from "@/components/room-chat";
+import { useRoomAudio } from "@/hooks/use-room-audio";
+import { Slider } from "@/components/ui/slider";
+
+interface RoomCardProps {
+  room: { id: number; name: string; theme: string; frequency: number; capacity: number; guestCount: number; isOpen: boolean };
+  activeGuests: { id: number; name: string; energyLevel: string }[];
+  selectedGuestId: string;
+  setSelectedGuestId: (v: string) => void;
+  onJoin: (roomId: number) => void;
+  isUpdating: boolean;
+}
+
+function RoomCard({ room, activeGuests, selectedGuestId, setSelectedGuestId, onJoin, isUpdating }: RoomCardProps) {
+  const { isPlaying, toggle, volume, setVolume } = useRoomAudio(room.frequency);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.85 }}
+      transition={{ duration: 0.3 }}
+      className="group relative"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-primary/10 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <Card className="relative p-6 bg-card/60 backdrop-blur-xl border border-secondary/20 hover:border-secondary/50 transition-all h-full flex flex-col z-10">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="font-display font-bold text-xl text-white mb-1 group-hover:text-secondary transition-colors">
+              {room.name}
+            </h3>
+            <div className="text-sm font-mono text-muted-foreground">{room.theme}</div>
+          </div>
+          <div className="px-3 py-1 rounded bg-black border border-secondary/50 text-secondary text-sm font-mono font-bold shadow-[0_0_10px_rgba(255,0,255,0.2)]">
+            {room.frequency}Hz
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <FrequencyWaveform frequency={room.frequency} color="rgb(255,0,255)" barCount={16} height={36} />
+        </div>
+
+        {/* Ambient audio controls */}
+        <div className="mb-4 flex items-center gap-3 p-2 rounded-lg bg-black/20 border border-white/5">
+          <button
+            onClick={toggle}
+            title={isPlaying ? "Stop frequency tone" : `Play ${room.frequency}Hz ambient tone`}
+            className={`flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest transition-colors ${isPlaying ? "text-secondary" : "text-muted-foreground hover:text-secondary"}`}
+          >
+            {isPlaying ? <Volume2 className="w-3.5 h-3.5 animate-pulse" /> : <VolumeX className="w-3.5 h-3.5" />}
+            {isPlaying ? "On" : "Tone"}
+          </button>
+          {isPlaying && (
+            <div className="flex-1">
+              <Slider
+                value={[volume * 100]}
+                onValueChange={([v]) => setVolume(v / 100)}
+                min={0} max={40} step={1}
+                className="w-full"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1" />
+
+        <div className="mt-4 flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 text-sm font-mono">
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="text-primary/70">Capacity:</span>
+            <span className="text-white font-bold">{room.guestCount}/{room.capacity}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <RoomChat roomId={room.id} roomName={room.name} />
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  onClick={() => {}}
+                  className="bg-secondary/10 border-secondary/50 text-secondary hover:bg-secondary hover:text-black uppercase font-display tracking-wider text-xs"
+                >
+                  Inject
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-card border-secondary/30 backdrop-blur-xl">
+                <DialogHeader>
+                  <DialogTitle className="font-display uppercase tracking-widest text-secondary glow-text-secondary">
+                    Vector Injection: {room.name}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="py-6 space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-mono text-secondary/70 uppercase tracking-widest">
+                      Select Entity to Inject
+                    </label>
+                    <Select value={selectedGuestId} onValueChange={setSelectedGuestId}>
+                      <SelectTrigger className="bg-black/50 border-secondary/30 text-white font-mono">
+                        <SelectValue placeholder="Identify entity..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-black border-secondary/30 text-white">
+                        {activeGuests.map(g => (
+                          <SelectItem key={g.id} value={g.id.toString()}>
+                            {g.name} ({g.energyLevel})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button
+                    onClick={() => onJoin(room.id)}
+                    disabled={isUpdating || !selectedGuestId}
+                    className="w-full bg-secondary/20 text-secondary border border-secondary hover:bg-secondary hover:text-black transition-all font-display uppercase tracking-widest"
+                  >
+                    {isUpdating ? "Processing..." : "Confirm Injection"}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+
+        {/* Fill bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/50 rounded-b-xl overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-secondary to-primary transition-all duration-1000"
+            style={{ width: `${(room.guestCount / room.capacity) * 100}%` }}
+          />
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
 
 const RoomCardSkeleton = memo(function RoomCardSkeleton() {
   return (
@@ -102,98 +236,17 @@ export default function Rooms() {
           </div>
         ) : (
           <AnimatePresence>
-          {openRooms.map((room, index) => (
-            <motion.div
-              key={room.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.85 }}
-              transition={{ delay: index * 0.1, duration: 0.3 }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-primary/10 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <Card className="relative p-6 bg-card/60 backdrop-blur-xl border border-secondary/20 hover:border-secondary/50 transition-all h-full flex flex-col z-10">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="font-display font-bold text-xl text-white mb-1 group-hover:text-secondary transition-colors">
-                      {room.name}
-                    </h3>
-                    <div className="text-sm font-mono text-muted-foreground">{room.theme}</div>
-                  </div>
-                  <div className="px-3 py-1 rounded bg-black border border-secondary/50 text-secondary text-sm font-mono font-bold shadow-[0_0_10px_rgba(255,0,255,0.2)]">
-                    {room.frequency}Hz
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <FrequencyWaveform frequency={room.frequency} color="rgb(255,0,255)" barCount={16} height={36} />
-                </div>
-
-                <div className="flex-1" />
-
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm font-mono">
-                    <Zap className="w-4 h-4 text-primary" />
-                    <span className="text-primary/70">Capacity:</span>
-                    <span className="text-white font-bold">{room.guestCount}/{room.capacity}</span>
-                  </div>
-
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setSelectedRoomId(room.id)}
-                        className="bg-secondary/10 border-secondary/50 text-secondary hover:bg-secondary hover:text-black uppercase font-display tracking-wider text-xs"
-                      >
-                        Inject
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-card border-secondary/30 backdrop-blur-xl">
-                      <DialogHeader>
-                        <DialogTitle className="font-display uppercase tracking-widest text-secondary glow-text-secondary">
-                          Vector Injection: {room.name}
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="py-6 space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-xs font-mono text-secondary/70 uppercase tracking-widest">
-                            Select Entity to Inject
-                          </label>
-                          <Select value={selectedGuestId} onValueChange={setSelectedGuestId}>
-                            <SelectTrigger className="bg-black/50 border-secondary/30 text-white font-mono">
-                              <SelectValue placeholder="Identify entity..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-black border-secondary/30 text-white">
-                              {activeGuests.map(g => (
-                                <SelectItem key={g.id} value={g.id.toString()}>
-                                  {g.name} ({g.energyLevel})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <Button
-                          onClick={handleJoin}
-                          disabled={updateGuest.isPending || !selectedGuestId}
-                          className="w-full bg-secondary/20 text-secondary border border-secondary hover:bg-secondary hover:text-black transition-all font-display uppercase tracking-widest"
-                        >
-                          {updateGuest.isPending ? "Processing..." : "Confirm Injection"}
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                {/* Fill bar */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/50 rounded-b-xl overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-secondary to-primary transition-all duration-1000"
-                    style={{ width: `${(room.guestCount / room.capacity) * 100}%` }}
-                  />
-                </div>
-              </Card>
-            </motion.div>
-          ))}
+            {openRooms.map((room) => (
+              <RoomCard
+                key={room.id}
+                room={room}
+                activeGuests={activeGuests}
+                selectedGuestId={selectedGuestId}
+                setSelectedGuestId={setSelectedGuestId}
+                onJoin={(roomId) => { setSelectedRoomId(roomId); handleJoin(); }}
+                isUpdating={updateGuest.isPending}
+              />
+            ))}
           </AnimatePresence>
         )}
       </div>
