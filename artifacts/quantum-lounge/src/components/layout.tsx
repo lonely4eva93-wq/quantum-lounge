@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useGetAuthMe, useOwnerLogout, getGetAuthMeQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, LayoutDashboard, Users, Grid, ListOrdered, Settings, Zap, ArrowRightLeft, MessageSquare, Home, Trophy } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Grid, ListOrdered, Settings, Zap, ArrowRightLeft, MessageSquare, Home, Trophy, Menu } from "lucide-react";
 import { Starfield } from "@/components/starfield";
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
 
 export function OwnerLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
@@ -84,6 +85,7 @@ export function OwnerLayout({ children }: { children: ReactNode }) {
 export function PublicLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const { data: auth } = useGetAuthMe();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
     { href: "/", label: "Lobby", icon: Home },
@@ -107,12 +109,13 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               <div className="w-8 h-8 rounded bg-gradient-to-br from-primary to-secondary flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(0,243,255,0.4)] transition-all">
                 <Zap className="w-5 h-5 text-black" />
               </div>
-              <span className="font-display font-bold tracking-[0.2em] text-xl glow-text-primary uppercase">
+              <span className="font-display font-bold tracking-[0.2em] text-xl glow-text-primary uppercase truncate max-w-[140px] sm:max-w-none">
                 {auth?.loungeName || "Quantum Lounge"}
               </span>
             </div>
           </Link>
 
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
               const isActive = location === item.href;
@@ -133,7 +136,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             })}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             {auth?.isOwner ? (
               <Link href="/owner/dashboard">
                 <div className="px-4 py-2 rounded border border-primary/50 text-primary text-sm font-bold uppercase tracking-wider hover:bg-primary/10 transition-colors cursor-pointer">
@@ -147,6 +150,75 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 </div>
               </Link>
             )}
+
+            {/* Mobile hamburger */}
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <button
+                  className="md:hidden flex items-center justify-center w-9 h-9 rounded border border-border/50 text-muted-foreground hover:text-white hover:border-primary/50 hover:bg-primary/10 transition-all duration-300"
+                  aria-label="Open navigation menu"
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="w-72 bg-background/95 backdrop-blur-xl border-r border-primary/20 p-0"
+              >
+                {/* Drawer header */}
+                <div className="p-6 border-b border-border/40">
+                  <SheetTitle className="sr-only">Navigation</SheetTitle>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.3)]">
+                      <Zap className="w-5 h-5 text-black" />
+                    </div>
+                    <span className="font-display font-bold tracking-[0.2em] text-lg glow-text-primary uppercase">
+                      {auth?.loungeName || "Quantum Lounge"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Drawer nav links */}
+                <nav className="p-4 space-y-1">
+                  {navItems.map((item) => {
+                    const isActive = location === item.href;
+                    return (
+                      <SheetClose asChild key={item.href}>
+                        <Link href={item.href}>
+                          <div
+                            className={`flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-300 cursor-pointer ${
+                              isActive
+                                ? "bg-primary/15 text-primary border border-primary/30 shadow-[0_0_12px_rgba(0,243,255,0.12)]"
+                                : "text-muted-foreground hover:bg-white/5 hover:text-white"
+                            }`}
+                          >
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
+                            <span className="font-medium tracking-wide">{item.label}</span>
+                            {isActive && (
+                              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,243,255,0.8)]" />
+                            )}
+                          </div>
+                        </Link>
+                      </SheetClose>
+                    );
+                  })}
+                </nav>
+
+                {/* Drawer footer */}
+                {auth?.isOwner && (
+                  <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border/40">
+                    <SheetClose asChild>
+                      <Link href="/owner/dashboard">
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-all duration-300 cursor-pointer">
+                          <LayoutDashboard className="w-5 h-5" />
+                          <span className="font-bold uppercase tracking-wider text-sm">Control Panel</span>
+                        </div>
+                      </Link>
+                    </SheetClose>
+                  </div>
+                )}
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
