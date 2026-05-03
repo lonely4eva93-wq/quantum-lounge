@@ -8,6 +8,8 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { GlitchText } from "@/components/glitch-text";
 
 export default function Energy() {
   const { data: upgrades, isLoading: loadingUpgrades } = useListEnergyUpgrades();
@@ -58,7 +60,7 @@ export default function Energy() {
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-widest text-white mb-4 glow-text-primary">
-            Energy Matrix
+            <GlitchText interval={6000}>Energy Matrix</GlitchText>
           </h1>
           <p className="text-primary/80 font-mono max-w-xl mx-auto">
             Acquire quantum upgrades to elevate your entity's vibrational frequency.
@@ -68,9 +70,24 @@ export default function Energy() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {loadingUpgrades ? (
-          <div className="col-span-full text-center text-primary/50 font-mono py-12 animate-pulse">
-            Analyzing available modifications...
-          </div>
+          <>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="p-8 rounded-xl border border-white/5 bg-white/2 space-y-4 h-64">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2">
+                    <Skeleton className="h-6 w-36 bg-white/5 rounded" />
+                    <Skeleton className="h-5 w-24 bg-white/5 rounded" />
+                  </div>
+                </div>
+                <Skeleton className="h-4 w-full bg-white/5 rounded" />
+                <Skeleton className="h-4 w-3/4 bg-white/5 rounded" />
+                <div className="flex justify-between items-end pt-4 border-t border-white/5">
+                  <Skeleton className="h-8 w-20 bg-white/5 rounded" />
+                  <Skeleton className="h-8 w-20 bg-white/5 rounded" />
+                </div>
+              </div>
+            ))}
+          </>
         ) : upgrades?.length === 0 ? (
           <div className="col-span-full text-center py-20 border border-dashed border-primary/20 rounded-2xl bg-primary/5">
             <Zap className="w-12 h-12 text-primary/30 mx-auto mb-4" />

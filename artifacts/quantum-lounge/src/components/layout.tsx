@@ -3,7 +3,8 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useGetAuthMe, useOwnerLogout, getGetAuthMeQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, LayoutDashboard, Users, Grid, ListOrdered, Settings, Zap, ArrowRightLeft, MessageSquare, Home } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Grid, ListOrdered, Settings, Zap, ArrowRightLeft, MessageSquare, Home, Trophy } from "lucide-react";
+import { Starfield } from "@/components/starfield";
 
 export function OwnerLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
@@ -87,6 +88,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   const navItems = [
     { href: "/", label: "Lobby", icon: Home },
     { href: "/rooms", label: "Rooms", icon: Grid },
+    { href: "/leaderboard", label: "Rank", icon: Trophy },
     { href: "/messages", label: "Comms", icon: MessageSquare },
     { href: "/teleport", label: "Teleport", icon: ArrowRightLeft },
     { href: "/energy", label: "Energy", icon: Zap },
@@ -94,11 +96,8 @@ export function PublicLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden">
-      {/* Ambient Background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] mix-blend-screen animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[150px] mix-blend-screen animate-pulse" style={{ animationDuration: '12s' }} />
-      </div>
+      {/* Animated Starfield Background */}
+      <Starfield />
 
       {/* Navbar */}
       <header className="border-b border-border/40 bg-background/50 backdrop-blur-md sticky top-0 z-50">

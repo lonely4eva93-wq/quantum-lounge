@@ -203,6 +203,26 @@ export interface DashboardStats {
   recentTransactions: Transaction[];
 }
 
+export interface LeaderboardEntry {
+  rank: number;
+  guestId: number;
+  guestName: string;
+  energyLevel: string;
+  upgradeCount: number;
+  teleportCount: number;
+  score: number;
+}
+
+export interface ActivityEvent {
+  id: string;
+  /** join | teleport | purchase */
+  type: string;
+  guestId?: number | null;
+  guestName: string;
+  detail: string;
+  timestamp: string;
+}
+
 export type ListMessagesParams = {
   roomId?: number;
 };

@@ -8,10 +8,51 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
+import { GuestProfile } from "@/components/guest-profile";
+
+const PARTICLE_COUNT = 16;
+
+function ParticleBurst({ active }: { active: boolean }) {
+  return (
+    <AnimatePresence>
+      {active && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center z-40">
+          {Array.from({ length: PARTICLE_COUNT }).map((_, i) => {
+            const angle = (i / PARTICLE_COUNT) * 360;
+            const distance = 80 + Math.random() * 60;
+            const rad = (angle * Math.PI) / 180;
+            const tx = Math.cos(rad) * distance;
+            const ty = Math.sin(rad) * distance;
+            const colors = ["#00f3ff", "#ff00ff", "#0064ff", "#ffffff", "#7c3aed"];
+            const color = colors[i % colors.length];
+            const size = 3 + Math.random() * 4;
+            return (
+              <motion.div
+                key={i}
+                initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                animate={{ x: tx, y: ty, opacity: 0, scale: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.015 }}
+                style={{
+                  position: "absolute",
+                  width: size,
+                  height: size,
+                  borderRadius: "50%",
+                  backgroundColor: color,
+                  boxShadow: `0 0 6px ${color}`,
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export default function Teleport() {
-  const { data: guests, isLoading: loadingGuests } = useListGuests();
-  const { data: rooms, isLoading: loadingRooms } = useListRooms();
+  const { data: guests } = useListGuests();
+  const { data: rooms } = useListRooms();
   const { data: history } = useListTeleportHistory();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -19,6 +60,8 @@ export default function Teleport() {
   const [guestId, setGuestId] = useState<string>("");
   const [toRoomId, setToRoomId] = useState<string>("");
   const [isTeleporting, setIsTeleporting] = useState(false);
+  const [showBurst, setShowBurst] = useState(false);
+  const [profileGuestId, setProfileGuestId] = useState<number | null>(null);
 
   const activeGuests = guests?.filter(g => g.status === "active") || [];
   const openRooms = rooms?.filter(r => r.isOpen) || [];
@@ -29,16 +72,20 @@ export default function Teleport() {
         queryClient.invalidateQueries({ queryKey: getListGuestsQueryKey() });
         queryClient.invalidateQueries({ queryKey: getListRoomsQueryKey() });
         
-        setIsTeleporting(true);
+        setShowBurst(true);
         setTimeout(() => {
-          setIsTeleporting(false);
-          toast({
-            title: "Teleportation Successful",
-            description: `Quantum shift of ${data.quantumShift} completed.`,
-          });
-          setGuestId("");
-          setToRoomId("");
-        }, 1500);
+          setShowBurst(false);
+          setIsTeleporting(true);
+          setTimeout(() => {
+            setIsTeleporting(false);
+            toast({
+              title: "Teleportation Successful",
+              description: `Quantum shift of ${data.quantumShift} completed.`,
+            });
+            setGuestId("");
+            setToRoomId("");
+          }, 1200);
+        }, 700);
       },
       onError: (err: any) => {
         toast({
@@ -92,11 +139,13 @@ export default function Teleport() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Portal Controls */}
         <Card className="p-8 bg-card/40 backdrop-blur-md border-accent/20 h-fit relative overflow-hidden">
+          <ParticleBurst active={showBurst} />
+
           {isTeleporting && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 1.5, times: [0, 0.2, 1] }}
+              transition={{ duration: 1.2, times: [0, 0.2, 1] }}
               className="absolute inset-0 bg-white z-50 mix-blend-overlay pointer-events-none"
             />
           )}
@@ -150,10 +199,10 @@ export default function Teleport() {
 
             <Button
               onClick={handleTeleport}
-              disabled={teleport.isPending || isTeleporting || !guestId || !toRoomId}
+              disabled={teleport.isPending || isTeleporting || showBurst || !guestId || !toRoomId}
               className="w-full h-14 bg-accent/20 text-accent border border-accent hover:bg-accent hover:text-black transition-all font-display uppercase tracking-widest text-lg mt-8 shadow-[0_0_15px_rgba(0,100,255,0.2)] hover:shadow-[0_0_30px_rgba(0,100,255,0.6)]"
             >
-              {teleport.isPending || isTeleporting ? "Initiating Jump..." : "Engage Portal"}
+              {teleport.isPending || isTeleporting || showBurst ? "Initiating Jump..." : "Engage Portal"}
             </Button>
           </div>
         </Card>
@@ -180,7 +229,19 @@ export default function Teleport() {
                     className="p-4 bg-card/30 border border-accent/20 rounded-xl hover:border-accent/40 transition-colors"
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <span className="font-bold text-white">{event.guestName}</span>
+                      <button
+                        onClick={() => {
+                          if (event.guestId) {
+                            setProfileGuestId(event.guestId);
+                          } else {
+                            const guest = guests?.find(g => g.name === event.guestName);
+                            if (guest) setProfileGuestId(guest.id);
+                          }
+                        }}
+                        className="font-bold text-white hover:text-accent transition-colors cursor-pointer"
+                      >
+                        {event.guestName}
+                      </button>
                       <span className="text-xs font-mono text-muted-foreground">
                         {format(new Date(event.teleportedAt), "HH:mm:ss")}
                       </span>
@@ -204,6 +265,8 @@ export default function Teleport() {
           </div>
         </div>
       </div>
+
+      <GuestProfile guestId={profileGuestId} onClose={() => setProfileGuestId(null)} />
     </div>
   );
 }

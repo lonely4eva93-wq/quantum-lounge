@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useGetAuthMe } from "@workspace/api-client-react";
 import NotFound from "@/pages/not-found";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 import { PublicLayout, OwnerLayout } from "@/components/layout";
 
@@ -13,6 +14,7 @@ import Rooms from "@/pages/rooms";
 import Messages from "@/pages/messages";
 import Teleport from "@/pages/teleport";
 import Energy from "@/pages/energy";
+import Leaderboard from "@/pages/leaderboard";
 
 // Owner Pages
 import OwnerLogin from "@/pages/owner/login";
@@ -22,7 +24,14 @@ import OwnerRooms from "@/pages/owner/rooms";
 import OwnerTransactions from "@/pages/owner/transactions";
 import OwnerSettings from "@/pages/owner/settings";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      gcTime: 5 * 60_000,
+    },
+  },
+});
 
 function ProtectedRoute({ component: Component }: { component: any }) {
   const { data: auth, isLoading } = useGetAuthMe();
@@ -41,7 +50,9 @@ function ProtectedRoute({ component: Component }: { component: any }) {
 
   return (
     <OwnerLayout>
-      <Component />
+      <ErrorBoundary>
+        <Component />
+      </ErrorBoundary>
     </OwnerLayout>
   );
 }
@@ -49,7 +60,9 @@ function ProtectedRoute({ component: Component }: { component: any }) {
 function PublicRoute({ component: Component }: { component: any }) {
   return (
     <PublicLayout>
-      <Component />
+      <ErrorBoundary>
+        <Component />
+      </ErrorBoundary>
     </PublicLayout>
   );
 }
@@ -60,6 +73,7 @@ function Router() {
       {/* Public Routes */}
       <Route path="/" component={() => <PublicRoute component={Home} />} />
       <Route path="/rooms" component={() => <PublicRoute component={Rooms} />} />
+      <Route path="/leaderboard" component={() => <PublicRoute component={Leaderboard} />} />
       <Route path="/messages" component={() => <PublicRoute component={Messages} />} />
       <Route path="/teleport" component={() => <PublicRoute component={Teleport} />} />
       <Route path="/energy" component={() => <PublicRoute component={Energy} />} />

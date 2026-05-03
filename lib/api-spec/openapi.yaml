@@ -493,6 +493,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/DashboardStats"
 
+  /stats/leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [lounge]
+      summary: Top guests ranked by energy, upgrades, and teleports
+      responses:
+        "200":
+          description: Leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /activity/recent:
+    get:
+      operationId: getRecentActivity
+      tags: [lounge]
+      summary: Recent activity feed (joins, teleports, purchases)
+      responses:
+        "200":
+          description: Activity events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEvent"
+
 components:
   schemas:
     HealthStatus:
@@ -880,3 +910,42 @@ components:
           items:
             $ref: "#/components/schemas/Transaction"
       required: [totalRevenue, availableBalance, totalCashedOut, activeGuests, totalGuests, openRooms, totalRooms, totalMessages, totalTeleports, recentTransactions]
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        guestId:
+          type: integer
+        guestName:
+          type: string
+        energyLevel:
+          type: string
+        upgradeCount:
+          type: integer
+        teleportCount:
+          type: integer
+        score:
+          type: number
+      required: [rank, guestId, guestName, energyLevel, upgradeCount, teleportCount, score]
+
+    ActivityEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          description: join | teleport | purchase
+        guestId:
+          type: integer
+          nullable: true
+        guestName:
+          type: string
+        detail:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required: [id, type, guestName, detail, timestamp]

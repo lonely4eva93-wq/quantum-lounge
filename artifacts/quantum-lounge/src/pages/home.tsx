@@ -1,24 +1,84 @@
-import { useListGuests, useListRooms, useCreateGuest, getListGuestsQueryKey } from "@workspace/api-client-react";
-import { useState } from "react";
+import { useListGuests, useListRooms, useCreateGuest, getListGuestsQueryKey, useGetRecentActivity, getGetRecentActivityQueryKey } from "@workspace/api-client-react";
+import { useState, memo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Radio, Activity, Fingerprint, LogIn } from "lucide-react";
+import { Zap, Radio, Activity, Fingerprint, LogIn, Rss } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FrequencyWaveform } from "@/components/frequency-waveform";
+import { GlitchText } from "@/components/glitch-text";
+import { GuestProfile } from "@/components/guest-profile";
+
+const activityTypeColors: Record<string, string> = {
+  join: "text-green-400 border-green-400/20 bg-green-400/5",
+  teleport: "text-primary border-primary/20 bg-primary/5",
+  purchase: "text-secondary border-secondary/20 bg-secondary/5",
+};
+
+const activityTypeLabels: Record<string, string> = {
+  join: "JOIN",
+  teleport: "JUMP",
+  purchase: "ACQR",
+};
+
+const GuestListItem = memo(function GuestListItem({
+  guest,
+  onNameClick,
+}: {
+  guest: { id: number; name: string; vibe: string; energyLevel: string; roomName?: string | null };
+  onNameClick: (id: number) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="flex items-center justify-between p-3 rounded-lg bg-card/50 border border-white/5 hover:border-accent/30 transition-colors"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`w-2 h-2 rounded-full shadow-[0_0_10px_currentColor] ${
+          guest.energyLevel === 'transcended' ? 'bg-secondary text-secondary animate-pulse' :
+          guest.energyLevel === 'quantum' ? 'bg-primary text-primary' :
+          guest.energyLevel === 'charged' ? 'bg-accent text-accent' :
+          'bg-muted-foreground text-muted-foreground'
+        }`} />
+        <div>
+          <button
+            onClick={() => onNameClick(guest.id)}
+            className="font-bold text-white tracking-wide hover:text-accent transition-colors cursor-pointer underline-offset-2 hover:underline"
+          >
+            {guest.name}
+          </button>
+          <span className="ml-2 text-xs font-mono text-muted-foreground px-2 py-0.5 rounded bg-white/5 border border-white/10">
+            {guest.vibe}
+          </span>
+        </div>
+      </div>
+      <div className="text-xs font-mono text-accent/70">
+        {guest.roomName || "Lobby"}
+      </div>
+    </motion.div>
+  );
+});
 
 export default function Home() {
   const { data: guests, isLoading: loadingGuests } = useListGuests();
   const { data: rooms, isLoading: loadingRooms } = useListRooms();
+  const { data: activity, isLoading: loadingActivity } = useGetRecentActivity({
+    query: { refetchInterval: 10_000, queryKey: getGetRecentActivityQueryKey() },
+  });
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const [name, setName] = useState("");
   const [vibe, setVibe] = useState("");
   const [roomId, setRoomId] = useState<string>("none");
+  const [profileGuestId, setProfileGuestId] = useState<number | null>(null);
 
   const createGuest = useCreateGuest({
     mutation: {
@@ -62,7 +122,7 @@ export default function Home() {
           className="relative z-10"
         >
           <h1 className="text-5xl md:text-7xl font-display font-bold uppercase tracking-[0.2em] text-white mb-6 glow-text-primary">
-            Enter the Void
+            <GlitchText interval={5000}>Enter the Void</GlitchText>
           </h1>
           <p className="text-xl text-primary/80 font-mono max-w-2xl mx-auto">
             A nexus of social energy where particles entangle and vibrations synchronize.
@@ -155,7 +215,22 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {loadingRooms ? (
-                <div className="text-primary/50 font-mono animate-pulse">Scanning frequencies...</div>
+                <>
+                  {[1, 2].map((i) => (
+                    <div key={i} className="p-4 rounded-xl border border-white/5 bg-white/2 space-y-3">
+                      <div className="flex justify-between">
+                        <Skeleton className="h-5 w-28 bg-white/5 rounded" />
+                        <Skeleton className="h-5 w-16 bg-white/5 rounded" />
+                      </div>
+                      <Skeleton className="h-4 w-40 bg-white/5 rounded" />
+                      <Skeleton className="h-6 w-full bg-white/5 rounded" />
+                      <div className="flex justify-between">
+                        <Skeleton className="h-3 w-24 bg-white/5 rounded" />
+                        <Skeleton className="h-3 w-16 bg-white/5 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </>
               ) : openRooms.length === 0 ? (
                 <div className="text-primary/50 font-mono border border-dashed border-primary/20 p-8 text-center rounded-lg">
                   No vectors currently open.
@@ -175,7 +250,10 @@ export default function Home() {
                         {room.frequency}Hz
                       </div>
                     </div>
-                    <div className="text-sm text-muted-foreground mb-4">{room.theme}</div>
+                    <div className="text-sm text-muted-foreground mb-3">{room.theme}</div>
+                    <div className="mb-3">
+                      <FrequencyWaveform frequency={room.frequency} color="rgb(255,0,255)" barCount={14} height={28} />
+                    </div>
                     <div className="flex justify-between items-center text-xs font-mono text-secondary/70">
                       <span>Capacity: {room.guestCount}/{room.capacity}</span>
                       <Link href="/rooms" className="text-secondary hover:text-white transition-colors">
@@ -199,7 +277,18 @@ export default function Home() {
 
             <div className="bg-black/20 border border-border/50 rounded-xl p-4 max-h-[300px] overflow-y-auto">
               {loadingGuests ? (
-                <div className="text-accent/50 font-mono animate-pulse">Detecting signatures...</div>
+                <div className="space-y-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-card/30 border border-white/5">
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="w-2 h-2 rounded-full bg-white/10" />
+                        <Skeleton className="h-4 w-24 bg-white/10 rounded" />
+                        <Skeleton className="h-4 w-16 bg-white/10 rounded" />
+                      </div>
+                      <Skeleton className="h-3 w-12 bg-white/10 rounded" />
+                    </div>
+                  ))}
+                </div>
               ) : activeGuests.length === 0 ? (
                 <div className="text-accent/50 font-mono text-center py-8">
                   The void is currently empty.
@@ -208,31 +297,11 @@ export default function Home() {
                 <div className="space-y-2">
                   <AnimatePresence>
                     {activeGuests.map((guest) => (
-                      <motion.div
+                      <GuestListItem
                         key={guest.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className="flex items-center justify-between p-3 rounded-lg bg-card/50 border border-white/5 hover:border-accent/30 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full shadow-[0_0_10px_currentColor] ${
-                            guest.energyLevel === 'transcended' ? 'bg-secondary text-secondary animate-pulse' :
-                            guest.energyLevel === 'quantum' ? 'bg-primary text-primary' :
-                            guest.energyLevel === 'charged' ? 'bg-accent text-accent' :
-                            'bg-muted-foreground text-muted-foreground'
-                          }`} />
-                          <div>
-                            <span className="font-bold text-white tracking-wide">{guest.name}</span>
-                            <span className="ml-2 text-xs font-mono text-muted-foreground px-2 py-0.5 rounded bg-white/5 border border-white/10">
-                              {guest.vibe}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="text-xs font-mono text-accent/70">
-                          {guest.roomName || "Lobby"}
-                        </div>
-                      </motion.div>
+                        guest={guest}
+                        onNameClick={setProfileGuestId}
+                      />
                     ))}
                   </AnimatePresence>
                 </div>
@@ -241,6 +310,76 @@ export default function Home() {
           </section>
         </div>
       </div>
+
+      {/* Live Activity Feed */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <Rss className="w-6 h-6 text-primary glow-text-primary" />
+          <h2 className="text-2xl font-display font-bold uppercase tracking-wider text-white">
+            Activity Feed
+          </h2>
+          <div className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono uppercase tracking-widest animate-pulse">
+            Live
+          </div>
+        </div>
+
+        <div className="bg-black/20 border border-border/50 rounded-xl p-4 max-h-80 overflow-y-auto">
+          {loadingActivity ? (
+            <div className="space-y-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-card/30 border border-white/5">
+                  <Skeleton className="h-5 w-12 bg-white/5 rounded" />
+                  <Skeleton className="h-4 w-24 bg-white/5 rounded" />
+                  <Skeleton className="h-4 flex-1 bg-white/5 rounded" />
+                  <Skeleton className="h-3 w-14 bg-white/5 rounded" />
+                </div>
+              ))}
+            </div>
+          ) : !activity || activity.length === 0 ? (
+            <div className="text-primary/50 font-mono text-center py-8">
+              Awaiting quantum events...
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <AnimatePresence initial={false}>
+                {activity.map((event) => (
+                  <motion.div
+                    key={event.id}
+                    initial={{ opacity: 0, y: -12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-card/30 border border-white/5 hover:border-white/10 transition-colors"
+                  >
+                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border uppercase tracking-widest shrink-0 ${activityTypeColors[event.type] ?? "text-muted-foreground"}`}>
+                      {activityTypeLabels[event.type] ?? event.type}
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (event.guestId) {
+                          setProfileGuestId(event.guestId);
+                        } else {
+                          const guest = guests?.find(g => g.name === event.guestName);
+                          if (guest) setProfileGuestId(guest.id);
+                        }
+                      }}
+                      className="font-bold text-white text-sm hover:text-primary transition-colors cursor-pointer"
+                    >
+                      {event.guestName}
+                    </button>
+                    <span className="text-muted-foreground text-sm font-mono flex-1 truncate">{event.detail}</span>
+                    <span className="text-xs font-mono text-white/30 shrink-0 tabular-nums">
+                      {new Date(event.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <GuestProfile guestId={profileGuestId} onClose={() => setProfileGuestId(null)} />
     </div>
   );
 }

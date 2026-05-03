@@ -1,12 +1,14 @@
 import { useGetStats, useRequestCashout, getGetStatsQueryKey, getListTransactionsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Activity, ArrowRightLeft, Users, Grid, Zap, Banknote, LogOut } from "lucide-react";
+import { Activity, ArrowRightLeft, Users, Grid, Zap, Banknote } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { CountUp } from "@/components/count-up";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
   const { data: stats, isLoading } = useGetStats();
@@ -43,8 +45,26 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Activity className="w-8 h-8 text-primary animate-spin" />
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map(i => (
+            <Card key={i} className="p-6 bg-card/40 border-border/50">
+              <Skeleton className="h-4 w-32 mb-3 bg-white/5 rounded" />
+              <Skeleton className="h-10 w-40 bg-white/5 rounded" />
+            </Card>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map(i => (
+            <Card key={i} className="p-6 bg-card/40 border-border/50 flex items-center gap-4">
+              <Skeleton className="w-12 h-12 rounded-lg bg-white/5" />
+              <div className="space-y-2">
+                <Skeleton className="h-7 w-12 bg-white/5 rounded" />
+                <Skeleton className="h-3 w-24 bg-white/5 rounded" />
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
@@ -74,7 +94,7 @@ export default function Dashboard() {
           <div className="relative z-10">
             <h3 className="text-sm font-mono text-primary/70 uppercase tracking-widest mb-2">Available Balance</h3>
             <div className="text-4xl font-display font-bold text-white tracking-widest">
-              ¤{(stats?.availableBalance || 0).toFixed(2)}
+              ¤<CountUp value={stats?.availableBalance || 0} decimals={2} duration={1000} />
             </div>
             
             <div className="mt-6 flex gap-2">
@@ -99,14 +119,14 @@ export default function Dashboard() {
         <Card className="p-6 bg-card/40 border-border/50 backdrop-blur-md">
           <h3 className="text-sm font-mono text-muted-foreground uppercase tracking-widest mb-2">Total Revenue</h3>
           <div className="text-3xl font-display font-bold text-white/90 tracking-widest">
-            ¤{(stats?.totalRevenue || 0).toFixed(2)}
+            ¤<CountUp value={stats?.totalRevenue || 0} decimals={2} duration={1000} />
           </div>
         </Card>
 
         <Card className="p-6 bg-card/40 border-border/50 backdrop-blur-md">
           <h3 className="text-sm font-mono text-muted-foreground uppercase tracking-widest mb-2">Total Extracted</h3>
           <div className="text-3xl font-display font-bold text-white/90 tracking-widest">
-            ¤{(stats?.totalCashedOut || 0).toFixed(2)}
+            ¤<CountUp value={stats?.totalCashedOut || 0} decimals={2} duration={1000} />
           </div>
         </Card>
       </div>
@@ -125,7 +145,9 @@ export default function Dashboard() {
                 <stat.icon className="w-6 h-6" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white font-display">{stat.value}</div>
+                <div className="text-2xl font-bold text-white font-display">
+                  <CountUp value={stat.value} duration={900} />
+                </div>
                 <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">{stat.label}</div>
               </div>
             </Card>

@@ -1,13 +1,35 @@
 import { useListRooms, useListGuests, useUpdateGuest, getListGuestsQueryKey, getListRoomsQueryKey } from "@workspace/api-client-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Grid, Radio, Zap, LogIn } from "lucide-react";
+import { Grid, Radio, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FrequencyWaveform } from "@/components/frequency-waveform";
+import { GlitchText } from "@/components/glitch-text";
+
+const RoomCardSkeleton = memo(function RoomCardSkeleton() {
+  return (
+    <div className="p-6 rounded-xl border border-white/5 bg-white/2 space-y-4 h-52">
+      <div className="flex justify-between items-start">
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-32 bg-white/5 rounded" />
+          <Skeleton className="h-4 w-24 bg-white/5 rounded" />
+        </div>
+        <Skeleton className="h-7 w-16 bg-white/5 rounded" />
+      </div>
+      <Skeleton className="h-8 w-full bg-white/5 rounded" />
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-4 w-24 bg-white/5 rounded" />
+        <Skeleton className="h-8 w-16 bg-white/5 rounded" />
+      </div>
+    </div>
+  );
+});
 
 export default function Rooms() {
   const { data: rooms, isLoading: loadingRooms } = useListRooms();
@@ -56,7 +78,7 @@ export default function Rooms() {
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-widest text-white mb-4 glow-text-secondary">
-            Quantum Vectors
+            <GlitchText interval={5500}>Quantum Vectors</GlitchText>
           </h1>
           <p className="text-secondary/80 font-mono max-w-xl mx-auto">
             Browse active frequencies and inject your particle into the desired social vector.
@@ -66,9 +88,9 @@ export default function Rooms() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loadingRooms ? (
-          <div className="col-span-full text-center text-secondary/50 font-mono py-12 animate-pulse">
-            Scanning dimensional frequencies...
-          </div>
+          <>
+            {[1, 2, 3].map((i) => <RoomCardSkeleton key={i} />)}
+          </>
         ) : openRooms.length === 0 ? (
           <div className="col-span-full text-center py-20 border border-dashed border-secondary/20 rounded-2xl bg-secondary/5">
             <Radio className="w-12 h-12 text-secondary/30 mx-auto mb-4" />
@@ -97,9 +119,13 @@ export default function Rooms() {
                   </div>
                 </div>
 
+                <div className="mb-4">
+                  <FrequencyWaveform frequency={room.frequency} color="rgb(255,0,255)" barCount={16} height={36} />
+                </div>
+
                 <div className="flex-1" />
 
-                <div className="mt-6 flex items-center justify-between">
+                <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm font-mono">
                     <Zap className="w-4 h-4 text-primary" />
                     <span className="text-primary/70">Capacity:</span>
@@ -164,6 +190,7 @@ export default function Rooms() {
           ))
         )}
       </div>
+
     </div>
   );
 }

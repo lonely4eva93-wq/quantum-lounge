@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, guestsTable, roomsTable, transactionsTable, messagesTable, teleportEventsTable } from "@workspace/db";
+import { db, guestsTable, roomsTable, transactionsTable, messagesTable, teleportEventsTable, guestUpgradesTable } from "@workspace/db";
 import { eq, count, sql } from "drizzle-orm";
 
 const router = Router();
@@ -51,6 +51,59 @@ router.get("/overview", async (_req, res) => {
     totalTeleports: Number(totalTeleportsRow.c),
     recentTransactions,
   });
+});
+
+router.get("/leaderboard", async (_req, res) => {
+  const energyTier: Record<string, number> = {
+    basic: 0,
+    charged: 1,
+    quantum: 2,
+    transcended: 3,
+  };
+
+  const guests = await db
+    .select()
+    .from(guestsTable)
+    .where(eq(guestsTable.status, "active"));
+
+  const [upgradeCountRows] = await Promise.all([
+    db
+      .select({ guestId: guestUpgradesTable.guestId, cnt: count() })
+      .from(guestUpgradesTable)
+      .groupBy(guestUpgradesTable.guestId),
+  ]);
+
+  const teleportCountRows = await db
+    .select({ guestId: teleportEventsTable.guestId, cnt: count() })
+    .from(teleportEventsTable)
+    .groupBy(teleportEventsTable.guestId);
+
+  const upgradeMap = new Map(upgradeCountRows.map((r) => [r.guestId, Number(r.cnt)]));
+  const teleportMap = new Map(teleportCountRows.map((r) => [r.guestId, Number(r.cnt)]));
+
+  const scored = guests.map((g) => {
+    const tier = energyTier[g.energyLevel] ?? 0;
+    const upgCnt = upgradeMap.get(g.id) ?? 0;
+    const telCnt = teleportMap.get(g.id) ?? 0;
+    const score = tier * 100 + upgCnt * 10 + telCnt;
+    return {
+      guestId: g.id,
+      guestName: g.name,
+      energyLevel: g.energyLevel,
+      upgradeCount: upgCnt,
+      teleportCount: telCnt,
+      score,
+    };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+
+  const result = scored.slice(0, 10).map((entry, idx) => ({
+    rank: idx + 1,
+    ...entry,
+  }));
+
+  return res.json(result);
 });
 
 export default router;

@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { GuestProfile } from "@/components/guest-profile";
 
 export default function OwnerGuests() {
   const { data: guests, isLoading } = useListGuests();
@@ -17,6 +18,7 @@ export default function OwnerGuests() {
 
   const [selectedGuestId, setSelectedGuestId] = useState<string>("");
   const [newStatus, setNewStatus] = useState<string>("active");
+  const [profileGuestId, setProfileGuestId] = useState<number | null>(null);
 
   const updateGuest = useUpdateGuest({
     mutation: {
@@ -82,7 +84,12 @@ export default function OwnerGuests() {
               <div className="flex flex-col md:flex-row justify-between gap-6 md:items-center">
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold text-white font-display uppercase tracking-wider">{guest.name}</h3>
+                    <button
+                    onClick={() => setProfileGuestId(guest.id)}
+                    className="text-xl font-bold text-white font-display uppercase tracking-wider hover:text-primary transition-colors cursor-pointer"
+                  >
+                    {guest.name}
+                  </button>
                     <div className={`px-2 py-0.5 rounded text-xs font-mono border ${
                       guest.status === 'active' ? 'bg-primary/10 text-primary border-primary/30' : 'bg-muted border-border text-muted-foreground'
                     }`}>
@@ -135,6 +142,8 @@ export default function OwnerGuests() {
           ))
         )}
       </div>
+
+      <GuestProfile guestId={profileGuestId} onClose={() => setProfileGuestId(null)} />
     </div>
   );
 }

@@ -9,6 +9,9 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { GlitchText } from "@/components/glitch-text";
+import { GuestProfile } from "@/components/guest-profile";
 
 export default function Messages() {
   const { data: messages, isLoading: loadingMessages } = useListMessages();
@@ -20,6 +23,7 @@ export default function Messages() {
   const [senderId, setSenderId] = useState<string>("");
   const [content, setContent] = useState("");
   const [roomId, setRoomId] = useState<string>("global");
+  const [profileGuestId, setProfileGuestId] = useState<number | null>(null);
 
   const activeGuests = guests?.filter(g => g.status === "active") || [];
   const openRooms = rooms?.filter(r => r.isOpen) || [];
@@ -59,7 +63,9 @@ export default function Messages() {
         <div>
           <h1 className="text-4xl font-display font-bold uppercase tracking-widest text-white mb-2 flex items-center gap-4">
             <MessageSquare className="w-8 h-8 text-primary glow-text-primary" />
-            <span className="glow-text-primary">Comms Array</span>
+            <span className="glow-text-primary">
+              <GlitchText interval={7000}>Comms Array</GlitchText>
+            </span>
           </h1>
           <p className="text-primary/70 font-mono">Real-time quantum-encrypted transmissions.</p>
         </div>
@@ -135,8 +141,20 @@ export default function Messages() {
         {/* Message Feed */}
         <div className="flex-1 bg-black/40 border border-primary/20 rounded-xl p-6 overflow-y-auto relative flex flex-col gap-4 scroll-smooth">
           {loadingMessages ? (
-            <div className="absolute inset-0 flex items-center justify-center text-primary/50 font-mono animate-pulse">
-              Intercepting signals...
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-card/50 border border-primary/10 rounded-lg p-4 relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-l" />
+                  <div className="pl-3 space-y-2">
+                    <div className="flex justify-between">
+                      <Skeleton className="h-4 w-28 bg-white/5 rounded" />
+                      <Skeleton className="h-3 w-20 bg-white/5 rounded" />
+                    </div>
+                    <Skeleton className="h-4 w-full bg-white/5 rounded" />
+                    <Skeleton className="h-4 w-2/3 bg-white/5 rounded" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : messages?.length === 0 ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-primary/50 font-mono">
@@ -157,7 +175,15 @@ export default function Messages() {
                   
                   <div className="flex justify-between items-start mb-2 pl-3">
                     <div className="flex items-center gap-3">
-                      <span className="font-bold text-white tracking-wide">{msg.senderName}</span>
+                      <button
+                        onClick={() => {
+                          const guest = guests?.find(g => g.name === msg.senderName);
+                          if (guest) setProfileGuestId(guest.id);
+                        }}
+                        className="font-bold text-white tracking-wide hover:text-primary transition-colors cursor-pointer"
+                      >
+                        {msg.senderName}
+                      </button>
                       {msg.roomName && (
                         <span className="text-xs font-mono text-secondary px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20">
                           {msg.roomName}
@@ -192,6 +218,8 @@ export default function Messages() {
           )}
         </div>
       </div>
+
+      <GuestProfile guestId={profileGuestId} onClose={() => setProfileGuestId(null)} />
     </div>
   );
 }

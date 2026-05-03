@@ -9,6 +9,7 @@ import teleportRouter from "./teleport";
 import transactionsRouter from "./transactions";
 import settingsRouter from "./settings";
 import statsRouter from "./stats";
+import activityRouter from "./activity";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use("/teleport", teleportRouter);
 router.use("/transactions", transactionsRouter);
 router.use("/settings", settingsRouter);
 router.use("/stats", statsRouter);
+router.use("/activity", activityRouter);
 
 export default router;

@@ -426,3 +426,32 @@ export const GetStatsResponse = zod.object({
     }),
   ),
 });
+
+/**
+ * @summary Top guests ranked by energy, upgrades, and teleports
+ */
+export const GetLeaderboardResponseItem = zod.object({
+  rank: zod.number(),
+  guestId: zod.number(),
+  guestName: zod.string(),
+  energyLevel: zod.string(),
+  upgradeCount: zod.number(),
+  teleportCount: zod.number(),
+  score: zod.number(),
+});
+export const GetLeaderboardResponse = zod.array(GetLeaderboardResponseItem);
+
+/**
+ * @summary Recent activity feed (joins, teleports, purchases)
+ */
+export const GetRecentActivityResponseItem = zod.object({
+  id: zod.string(),
+  type: zod.string().describe("join | teleport | purchase"),
+  guestId: zod.number().nullish(),
+  guestName: zod.string(),
+  detail: zod.string(),
+  timestamp: zod.coerce.date(),
+});
+export const GetRecentActivityResponse = zod.array(
+  GetRecentActivityResponseItem,
+);
