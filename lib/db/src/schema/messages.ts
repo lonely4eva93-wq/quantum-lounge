@@ -1,15 +1,15 @@
-import { pgTable, serial, text, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, boolean, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { roomsTable } from "./rooms";
 
 export const messagesTable = pgTable("messages", {
   id: serial("id").primaryKey(),
-  senderName: text("sender_name").notNull(),
+  senderName: text("sender_name").notNull().default("Anonymous"),
   content: text("content").notNull(),
-  roomId: integer("room_id").references(() => roomsTable.id),
-  isEncrypted: boolean("is_encrypted").notNull().default(true),
-  quantumSignature: text("quantum_signature").notNull(),
+  roomId: integer("room_id").references(() => roomsTable.id, { onDelete: "set null" }),
+  isEncrypted: boolean("is_encrypted").notNull().default(false),
+  quantumSignature: text("quantum_signature"),
   sentAt: timestamp("sent_at").notNull().defaultNow(),
 });
 

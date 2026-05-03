@@ -37,6 +37,7 @@ export function OwnerLayout({ children }: { children: ReactNode }) {
     { href: "/owner/boosts", label: "Boosts", icon: Rocket },
     { href: "/owner/transactions", label: "Transactions", icon: ListOrdered },
     { href: "/owner/settings", label: "Settings", icon: Settings },
+    { href: "/owner/security", label: "Security", icon: Lock },
   ];
 
   return (

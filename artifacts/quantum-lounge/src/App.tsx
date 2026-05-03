@@ -39,6 +39,9 @@ import OwnerReferrals from "@/pages/owner/referrals";
 import OwnerBoosts from "@/pages/owner/boosts";
 import OwnerAnalytics from "@/pages/owner/analytics";
 import OwnerEventsPage from "@/pages/owner/owner-events";
+import OwnerSecurity from "@/pages/owner/security";
+import LegalPage from "@/pages/legal";
+import NdaPage from "@/pages/nda";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -119,6 +122,10 @@ function Router() {
       <Route path="/owner/boosts" component={() => <ProtectedRoute component={OwnerBoosts} />} />
       <Route path="/owner/analytics" component={() => <ProtectedRoute component={OwnerAnalytics} />} />
       <Route path="/owner/events" component={() => <ProtectedRoute component={OwnerEventsPage} />} />
+      <Route path="/owner/security" component={() => <ProtectedRoute component={OwnerSecurity} />} />
+
+      <Route path="/legal" component={LegalPage} />
+      <Route path="/nda" component={NdaPage} />
 
       <Route component={NotFound} />
     </Switch>

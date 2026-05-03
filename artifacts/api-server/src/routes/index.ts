@@ -23,6 +23,9 @@ import analyticsRouter from "./analytics";
 import achievementsRouter from "./achievements";
 import eventsRouter from "./events";
 import chatRouter from "./chat";
+import hiveMindRouter from "./hive-mind";
+import oracleAiRouter from "./oracle-ai";
+import securityRouter from "./security";
 
 const router: IRouter = Router();
 
@@ -50,5 +53,8 @@ router.use("/analytics", analyticsRouter);
 router.use("/achievements", achievementsRouter);
 router.use("/events", eventsRouter);
 router.use("/chat", chatRouter);
+router.use("/hive-mind", hiveMindRouter);
+router.use("/oracle", oracleAiRouter);
+router.use("/security", securityRouter);
 
 export default router;
