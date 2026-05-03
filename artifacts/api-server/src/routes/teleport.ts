@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, teleportEventsTable, guestsTable, roomsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { awardBadgeIfNew } from "../lib/award-badge";
 
 const router = Router();
 
@@ -23,6 +24,9 @@ router.post("/", async (req, res) => {
   const [updated] = await db.update(guestsTable).set({ roomId: toRoomId }).where(eq(guestsTable.id, guestId)).returning();
 
   const [fromRoom] = fromRoomId ? await db.select().from(roomsTable).where(eq(roomsTable.id, fromRoomId)) : [null];
+
+  // Auto-award teleporter badge (fire-and-forget)
+  awardBadgeIfNew(guestId, "teleporter").catch(() => {});
 
   return res.json({
     success: true,

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, guestsTable, roomsTable, transactionsTable, settingsTable, teleportEventsTable, messagesTable, guestAchievementsTable } from "@workspace/db";
 import { eq, count, sql } from "drizzle-orm";
+import { awardBadgeIfNew } from "../lib/award-badge";
 
 const router = Router();
 
@@ -111,6 +112,9 @@ router.post("/", async (req, res) => {
     guestId: guest.id,
     status: "completed",
   });
+
+  // Auto-award first check-in badge (fire-and-forget)
+  awardBadgeIfNew(guest.id, "first_checkin").catch(() => {});
 
   return res.status(201).json(await withRoom(guest));
 });

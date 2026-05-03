@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, energyUpgradesTable, guestUpgradesTable, guestsTable, transactionsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { awardBadgeIfNew } from "../lib/award-badge";
 
 const router = Router();
 
@@ -53,6 +54,11 @@ router.post("/guest-upgrades", async (req, res) => {
     .returning();
 
   await db.update(guestsTable).set({ energyLevel: upgrade.level }).where(eq(guestsTable.id, guestId));
+
+  // Auto-award energy tier badges
+  if (upgrade.level === "charged") awardBadgeIfNew(guestId, "energy_charged").catch(() => {});
+  if (upgrade.level === "quantum") awardBadgeIfNew(guestId, "energy_quantum").catch(() => {});
+  if (upgrade.level === "transcended") awardBadgeIfNew(guestId, "energy_transcended").catch(() => {});
 
   await db.insert(transactionsTable).values({
     type: "energy_upgrade",
